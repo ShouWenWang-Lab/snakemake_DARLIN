@@ -1,0 +1,2 @@
+SyntaxError in line 13 of /n/data1/bch/hemonc/camargo/li/my_scripts/snakeTemplate/Snakefile:
+f-string: unmatched '[' (Snakefile, line 13)

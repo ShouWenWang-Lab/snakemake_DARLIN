@@ -1,0 +1,24 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 2
+Rules claiming more threads will be scaled down.
+Job stats:
+job                    count    min threads    max threads
+-------------------  -------  -------------  -------------
+multiqc_before_pear        1              1              1
+total                      1              1              1
+
+Select jobs to execute...
+
+[Sun Oct 10 21:34:00 2021]
+rule multiqc_before_pear:
+    input: fastqc_before_pear.done
+    output: multiqc_before_pear.done
+    jobid: 0
+    resources: tmpdir=/tmp
+
+Touching output file multiqc_before_pear.done.
+[Sun Oct 10 21:34:07 2021]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /n/data1/bch/hemonc/camargo/li/my_scripts/snakeTemplate/.snakemake/log/2021-10-10T213359.648052.snakemake.log

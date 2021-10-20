@@ -1,0 +1,4 @@
+Building DAG of jobs...
+MissingInputException in line 6 of /n/data1/bch/hemonc/camargo/li/my_scripts/snakeTemplate/Snakefile:
+Missing input files for rule fastqc_before_pear:
+/n/data1/bch/hemonc/camargo/li/DATA/20211010_3_pulses_cCARLIN_Tigre/raw_fastq/LL605-HSC_S4_L001_R2_001.fastq.gzdownload_fastq.done
