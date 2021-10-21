@@ -23,7 +23,7 @@ sbatch : 1 # 1, run sbatch job;  0, run in the interactive mode.  This only affe
 CARLIN_max_run_time : 12 # hours
 ```
 
-3, Run snakemake pipeline sequentially. Make sure that each snakemake run is finished before proceeding to the next one. 
+3, Run snakemake pipeline sequentially `within` this folder. Make sure that each snakemake run is finished before proceeding to the next one. 
 
 First, we have pre-defined the snakefile directory in the system:
 ```bash
