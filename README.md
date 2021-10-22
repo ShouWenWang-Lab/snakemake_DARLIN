@@ -34,19 +34,19 @@ snake=/n/data1/bch/hemonc/camargo/li/snakeTemplate
 Get the data
 
 ```bash
-snakemake -s ${snake}/Snakefile_get_data.py --core 1
+snakemake -s ${snake}/Snakefile_get_data.py --configfile config.yaml --core 1
 ```
 
 Run pear, fastqc, multiqc, and CARLIN analysis. Note that only the CARLIN analysis has the option to use the sbatch job mode. This is because we need to make sure that the pear result is done before we proceed with the CARLIN analysis. You can use more cores to parallelize the analysis (make sure that you run `srun -t 0-12:00 --pty -p interactive -n 10 --mem 50G /bin/bash` to get more resources first).
 
 ```bash
-snakemake -s ${snake}/Snakefile_QC_CARLIN.py --core 10
+snakemake -s ${snake}/Snakefile_QC_CARLIN.py  --configfile config.yaml --core 10
 ```
 
 Merge all samples, calculate allele bank, make relevant plots, and transfer data to `o2_data`, where you can git push to share data with your local machine.
 
 ```bash
-snakemake -s ${snake}/Snakefile_downstream.py --core 1
+snakemake -s ${snake}/Snakefile_downstream.py --configfile config.yaml --core 1
 ```
 
 Sometimes, `o2_data` can get too large due to the historical files. You can clean up the `.git` there by running 
