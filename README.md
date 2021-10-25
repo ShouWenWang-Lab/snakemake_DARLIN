@@ -1,3 +1,5 @@
+# Introduction
+
 In order to run Snakemake pipeline, you can do the following.
 
 1, To grab the new data from basespace, first view sample information
@@ -16,7 +18,7 @@ CARLIN_dir : '/n/data1/bch/hemonc/camargo/li/CARLIN_pipeline'
 SampleList : [] # [] means no selection, and all will be selected;
 cfg_type : 'BulkRNA' # BulkDNA_Tigre (with a UMI QC threshold 25), BulkDNA (UMI QC threshold 30);  
 template : 'cCARLIN' # (for Tigre, the template is switched)
-read_cutoff_override : 3 
+read_cutoff_override : [3] 
 read_cutoff_floor : 1  # This variable is overrided by read_cutoff_override
 CARLIN_memory_factor : 100 # request memory at X times the size of the pear fastq file.
 sbatch : 1 # 1, run sbatch job;  0, run in the interactive mode.  This only affects the CARLIN analysis and csv generation. 
@@ -56,3 +58,20 @@ sh ${snake}/clean_o2_data.sh
 ```
 Note that, to run this, you will need to switch to the login node. 
 
+
+
+# A test run
+
+You can perform a test run using a small amount of data to see if the parameters are OK. 
+```bash
+root_path=/n/data1/bch/hemonc/camargo/li/DATA/clean_up_data/20211025_CC_TC_RC/cCARLIN
+cd $root_path/raw_fastq
+gzip -d -c 1_S1_L001_R1_001.fastq.gz > 1_S1_L001_R1_001.fastq
+gzip -d -c 1_S1_L001_R2_001.fastq.gz > 1_S1_L001_R2_001.fastq
+head -n 40000 1_S1_L001_R1_001.fastq > test_L001_R1_001.fastq
+head -n 40000 1_S1_L001_R2_001.fastq > test_L001_R2_001.fastq
+gzip test_L001_R1_001.fastq
+gzip test_L001_R2_001.fastq
+cd $root_path
+snakemake -s ${snake}/Snakefile_QC_CARLIN.py  --configfile config.yaml --core 1
+```

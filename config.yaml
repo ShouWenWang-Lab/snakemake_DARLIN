@@ -6,7 +6,7 @@ CARLIN_dir : '/n/data1/bch/hemonc/camargo/li/CARLIN_pipeline/Custom_CARLIN'
 SampleList : [] # [] means no selection, and all will be selected;  in contrast, you can select desigred samples, like ['a','b'] etc 
 cfg_type : 'BulkRNA' # BulkDNA_Tigre (with a UMI QC threshold 25), BulkDNA (UMI QC threshold 30);  
 template : 'cCARLIN' # Tigre or cCARLIN (for Tigre, the template is switched)
-read_cutoff_override : 3 
+read_cutoff_override : [3] 
 read_cutoff_floor : 1  # the algorithm takes the max of ....; this variable is not actually useful, as it is overrided by read_cutoff_override
 CARLIN_memory_factor : 100 # request memory at X times the size of the pear fastq file.
 sbatch : 1 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
