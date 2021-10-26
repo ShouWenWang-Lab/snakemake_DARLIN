@@ -75,3 +75,9 @@ gzip test_L001_R2_001.fastq
 cd $root_path
 snakemake -s ${snake}/Snakefile_QC_CARLIN.py  --configfile config.yaml --core 1
 ```
+
+After the run, you may want to remove the results 
+```bash
+rm -r -f CARLIN pear_output fastqc_before_pear fastqc_after_pear
+```
+

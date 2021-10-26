@@ -10,4 +10,4 @@ rsync -avP $input_dir/CARLIN $output_dir
 cp $input_dir/fastqc_after_pear/multiqc_report.html $output_dir/multiqc_report_after_pear.html
 cp $input_dir/fastqc_before_pear/multiqc_report.html $output_dir/multiqc_report_before_pear.html
 cp $input_dir/*.yaml $output_dir
-cp $root_path/$root_folder_name/*.json $root_path/o2_data/$root_folder_name
+#cp $root_path/$root_folder_name/*.json $root_path/o2_data/$root_folder_name

@@ -120,7 +120,6 @@ df_list=[df]
 x_var_list=["UMI_eventful",'CARLIN_potential_by_UMI',"edit_UMI_fraction"]
 annotation=['']
 #title='Read threshold=3'
-color_list=['b','r','c']
 
 selected_variables=['UMI_eventful',
                     "edit_UMI_fraction",
@@ -149,8 +148,14 @@ for x_var in x_var_list:
     for j, yy in enumerate(selected_variables):
         #fig=plt.figure(figsize=(4,3))
         ax=plt.subplot(n_rows, n_columns,j+1)
-        for k,xx in enumerate(df_list):
-            ax.plot(xx[x_var],xx[yy],'^',label=annotation[k],color=color_list[k])
+        for k,df0 in enumerate(df_list):
+            all_samples=list(df0['sample'])
+            all_samples.remove('merge_all')
+            df0=df0.set_index('sample')
+            df_1=df0.loc[all_samples]
+            ax.plot(df_1[x_var],df_1[yy],'k^',label=annotation[k])
+            df_1=df0.loc['merge_all']
+            ax.plot(df_1[x_var],df_1[yy],'r*')
         #ax.legend()
         ax.set_ylabel(yy)
         ax.set_xlabel(x_var)
