@@ -55,14 +55,14 @@ for sample in SampleList.split(','):
         x_label=['A','T','C','G']
         count=[np.sum(np.array(insertion_list)==x) for x in x_label]
         axs[0].bar([0,1,2,3],count,tick_label=x_label)
-        axs[0].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.e'))
+        axs[0].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
         axs[0].set_ylabel('Count')
         axs[0].set_title(sample)
 
 
         axs[1].bar([0,1],[count[0]+count[1],count[2]+count[3]],tick_label=['A+T','C+G'])
         axs[1].set_ylabel('Count')
-        axs[1].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.e'))
+        axs[1].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
         plt.tight_layout()
         plt.savefig(f'{output_dir}/{sample}/insertion_pattern.png')
 
@@ -70,14 +70,14 @@ f, axs = plt.subplots(1, 2, figsize=(8, 4),gridspec_kw=dict(width_ratios=[4, 3])
 x_label=['A','T','C','G']
 count=[np.sum(np.array(tot_insertion_list)==x) for x in x_label]
 axs[0].bar([0,1,2,3],count,tick_label=x_label)
-axs[0].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.e'))
+axs[0].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
 axs[0].set_ylabel('Count')
 axs[0].set_title('All samples')
 
 
 axs[1].bar([0,1],[count[0]+count[1],count[2]+count[3]],tick_label=['A+T','C+G'])
 axs[1].set_ylabel('Count')
-axs[1].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.e'))
+axs[1].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.1e'))
 plt.tight_layout()
 
 os.makedirs(f'{output_dir}/merge_all',exist_ok=True)

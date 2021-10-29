@@ -74,7 +74,7 @@ head -n 40000 ${sample_name}_L001_R2_001.fastq > test_L001_R2_001.fastq
 gzip test_L001_R1_001.fastq
 gzip test_L001_R2_001.fastq
 cd $root_path
-snakemake -s ${snake}/Snakefile_QC_CARLIN.py  --configfile config.yaml --core 1
+snakemake -s ${snake}/Snakefile_QC_CARLIN.py  --configfile config_test.yaml --core 1
 ```
 
 After the run, you may want to remove the results 
