@@ -20,7 +20,7 @@ rule download_fastq:
     output: 
         touch("raw_fastq/download_fastq.done")
     run:
-        shell('{params.script_dir}/download_fastq.sh {params.project_name} {params.project_ID} {params.data_path}')
+        shell("{params.script_dir}/download_fastq.sh '{params.project_name}' '{params.project_ID}' '{params.data_path}'")
         shell("python {params.script_dir}/get_sample_info.py --data_path {params.data_path}/raw_fastq")
 
     

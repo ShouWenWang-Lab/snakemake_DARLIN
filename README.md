@@ -11,8 +11,8 @@ In order to run Snakemake pipeline, you can do the following.
 2, Make a folder under `DATA` with a proper name for this dataset, and create a YAML file uner this folder with the following sample information
 
 ```yaml
-project_name : '3_pulses_LL605_LL607'
-project_ID : '295673483'
+project_name : 'XXX'
+project_ID : 'XXX'
 script_dir: '/n/data1/bch/hemonc/camargo/li/my_scripts/snakeTemplate'
 CARLIN_dir : '/n/data1/bch/hemonc/camargo/li/CARLIN_pipeline'
 SampleList : [] # [] means no selection, and all will be selected;
@@ -64,12 +64,13 @@ Note that, to run this, you will need to switch to the login node.
 
 You can perform a test run using a small amount of data to see if the parameters are OK. 
 ```bash
-root_path=/n/data1/bch/hemonc/camargo/li/DATA/clean_up_data/20211025_CC_TC_RC/cCARLIN
+root_path='XXX'
+sample_name='XXX'
 cd $root_path/raw_fastq
-gzip -d -c 1_S1_L001_R1_001.fastq.gz > 1_S1_L001_R1_001.fastq
-gzip -d -c 1_S1_L001_R2_001.fastq.gz > 1_S1_L001_R2_001.fastq
-head -n 40000 1_S1_L001_R1_001.fastq > test_L001_R1_001.fastq
-head -n 40000 1_S1_L001_R2_001.fastq > test_L001_R2_001.fastq
+gzip -d -c ${sample_name}_L001_R1_001.fastq.gz > ${sample_name}_L001_R1_001.fastq
+gzip -d -c ${sample_name}_L001_R2_001.fastq.gz > ${sample_name}_L001_R2_001.fastq
+head -n 40000 ${sample_name}_L001_R1_001.fastq > test_L001_R1_001.fastq
+head -n 40000 ${sample_name}_L001_R2_001.fastq > test_L001_R2_001.fastq
 gzip test_L001_R1_001.fastq
 gzip test_L001_R2_001.fastq
 cd $root_path
