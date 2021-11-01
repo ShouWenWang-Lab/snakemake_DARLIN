@@ -45,18 +45,25 @@ Run pear, fastqc, multiqc, and CARLIN analysis. Note that only the CARLIN analys
 snakemake -s ${snake}/Snakefile_QC_CARLIN.py  --configfile config.yaml --core 10
 ```
 
-Merge all samples, calculate allele bank, make relevant plots, and transfer data to `o2_data`, where you can git push to share data with your local machine.
+Merge all samples, calculate allele bank, make relevant plots etc.
 
 ```bash
 snakemake -s ${snake}/Snakefile_downstream.py --configfile config.yaml --core 1
 ```
 
-Sometimes, `o2_data` can get too large due to the historical files. You can clean up the `.git` there by running 
+Finally, you can upload the data to the remote storage so that you can just pull it to your local computer
+
+```bash
+snakemake -s ${snake}/Snakefile_upload_data.py --configfile config.yaml --core 1
+```
+
+
+<!-- Sometimes, `o2_data` can get too large due to the historical files. You can clean up the `.git` there by running 
 
 ```bash
 sh ${snake}/clean_o2_data.sh 
 ```
-Note that, to run this, you will need to switch to the login node. 
+Note that, to run this, you will need to switch to the login node.  -->
 
 
 
@@ -73,6 +80,7 @@ head -n 40000 ${sample_name}_L001_R1_001.fastq > test_L001_R1_001.fastq
 head -n 40000 ${sample_name}_L001_R2_001.fastq > test_L001_R2_001.fastq
 gzip test_L001_R1_001.fastq
 gzip test_L001_R2_001.fastq
+rm -f ${sample_name}_L001_R1_001.fastq ${sample_name}_L001_R2_001.fastq
 cd $root_path
 snakemake -s ${snake}/Snakefile_QC_CARLIN.py  --configfile config_test.yaml --core 1
 ```

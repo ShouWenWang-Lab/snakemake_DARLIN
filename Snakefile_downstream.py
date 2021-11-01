@@ -40,8 +40,7 @@ print(f"Subdir: {CARLIN_sub_dir}")
 rule all:
     input: 
         expand("CARLIN/{sub_dir}/merge_all/refined_results.csv",sub_dir=CARLIN_sub_dir),
-        expand("CARLIN/{sub_dir}/merge_all/all_insertion_pattern.png",sub_dir=CARLIN_sub_dir),
-        expand("CARLIN/{sub_dir}/transfer_data.done",sub_dir=CARLIN_sub_dir)
+        expand("CARLIN/{sub_dir}/merge_all/all_insertion_pattern.png",sub_dir=CARLIN_sub_dir)
         
         
 rule merge_all_sample:
@@ -89,18 +88,7 @@ rule more_plots:
         shell("python {params.script_dir}/make_more_plots.py --input_dir {input_dir} --SampleList {params.Samples} --output_dir {output_dir}")
         
         
-rule transfer_data:
-    input:
-        "CARLIN/{sub_dir}/merge_all/all_insertion_pattern.png"
-    output:
-        touch("CARLIN/{sub_dir}/transfer_data.done")
-    params:
-        script_dir=config['script_dir']
-    run:
-        root_sub_dir=config['data_dir'].split('/DATA/')[1]
-        root_folder_name=root_sub_dir.split('/'+root_sub_dir.split('/')[-1])[0]
-        shell("sh {params.script_dir}/transfer_data.sh {root_sub_dir} {root_folder_name}")
-        hf.training_notification(msg="Snakefile_downstream.py---"+config['data_dir'])
+
         
         
 
