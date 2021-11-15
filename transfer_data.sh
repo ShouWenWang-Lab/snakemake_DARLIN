@@ -3,7 +3,7 @@
 folder_name=$1
 #root_folder_name=$2
 root_path=/n/data1/bch/hemonc/camargo/li
-input_dir=$root_path/DATA$folder_name
+input_dir=$root_path/DATA/$folder_name
 output_dir=$root_path/temp_data/$folder_name
 mkdir -p $output_dir
 rsync -avP $input_dir/raw_fastq $output_dir

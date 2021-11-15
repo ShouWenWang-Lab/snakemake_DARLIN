@@ -27,7 +27,7 @@ else:
     SampleList=config['SampleList']
 print(f'SampleList: {SampleList}')
     
-CARLIN_sub_dir=os.listdir('CARLIN')
+CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_override']]
 print(f"Subdir: {CARLIN_sub_dir}")
 #CARLIN_sub_dir="results_cutoff_override_"+str(config['read_cutoff_override'])
 
@@ -40,12 +40,14 @@ print(f"Subdir: {CARLIN_sub_dir}")
 rule all:
     input: 
         expand("CARLIN/{sub_dir}/merge_all/refined_results.csv",sub_dir=CARLIN_sub_dir),
-        expand("CARLIN/{sub_dir}/merge_all/all_insertion_pattern.png",sub_dir=CARLIN_sub_dir)
+        expand("CARLIN/{sub_dir}/merge_all/all_insertion_pattern.png",sub_dir=CARLIN_sub_dir),
+        expand("CARLIN/{sub_dir}/merge_all/allele_annotation.mat",sub_dir=CARLIN_sub_dir)
         
         
 rule merge_all_sample:
     output:
-        "CARLIN/{sub_dir}/merge_all/Summary.mat"
+        "CARLIN/{sub_dir}/merge_all/Bank.mat",
+        "CARLIN/{sub_dir}/merge_all/allele_annotation.mat"
     params:
         script_dir=config['script_dir'],
         CARLIN_dir=config['CARLIN_dir'],
@@ -59,7 +61,7 @@ rule merge_all_sample:
         
 rule CARLIN_csv:
     input:
-        "CARLIN/{sub_dir}/merge_all/Summary.mat"
+        "CARLIN/{sub_dir}/merge_all/Bank.mat"
     output:
         "CARLIN/{sub_dir}/merge_all/refined_results.csv"
     params:
