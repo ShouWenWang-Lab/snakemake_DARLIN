@@ -162,5 +162,5 @@ for x_var in x_var_list:
         #ax.set_title(title)
 
     plt.tight_layout()
-    fig.savefig(f'{output_dir}/merge_all/view_data_across_samples_{x_var}.pdf')
+    fig.savefig(f'{output_dir}/merge_all/view_data_across_samples_{x_var}.png')
 

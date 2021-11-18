@@ -41,8 +41,8 @@ rule all:
     input: 
         expand("CARLIN/{sub_dir}/merge_all/refined_results.csv",sub_dir=CARLIN_sub_dir),
         expand("CARLIN/{sub_dir}/merge_all/all_insertion_pattern.png",sub_dir=CARLIN_sub_dir),
-        expand("CARLIN/{sub_dir}/merge_all/allele_annotation.mat",sub_dir=CARLIN_sub_dir)
-        
+        expand("CARLIN/{sub_dir}/merge_all/allele_annotation.mat",sub_dir=CARLIN_sub_dir),
+        expand("CARLIN/{sub_dir}/merge_all/CARLIN_report.html",sub_dir=CARLIN_sub_dir),
         
 rule merge_all_sample:
     output:
@@ -88,8 +88,20 @@ rule more_plots:
         input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         shell("python {params.script_dir}/make_more_plots.py --input_dir {input_dir} --SampleList {params.Samples} --output_dir {output_dir}")
+        shell("python {params.script_dir}/clonal_analysis.py --data_path {input_dir} --SampleList {params.Samples}")
         
         
+rule generate_report:
+    input:
+        "CARLIN/{sub_dir}/merge_all/all_insertion_pattern.png"
+    output:
+        "CARLIN/{sub_dir}/merge_all/CARLIN_report.html"
+    run:
+        script_dir=config['script_dir']
+        Samples=','.join(SampleList)
+        data_dir=os.path.join(config['data_dir'],'CARLIN', wildcards.sub_dir)
+        shell(f"papermill  {script_dir}/CARLIN_report.ipynb  {data_dir}/merge_all/CARLIN_report.ipynb  -p data_dir {data_dir} -p Samples {Samples} -k cospar_envs")
+        shell("jupyter nbconvert --to html {data_dir}/merge_all/CARLIN_report.ipynb")
 
         
         

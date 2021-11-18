@@ -19,12 +19,18 @@ parser.add_argument(
 parser.add_argument(
     "--SampleList",
     type=str,
-    default="",
+    default="*",
     help="A string of sample names, separated by comma",
 )
 
 data_path = parser.parse_args().data_path
-SampleList= parser.parse_args().SampleList.split(',')
+SampleList= parser.parse_args().SampleList
+
+if SampleList=="*":
+    data = loadmat(os.path.join(data_path, "merge_all", "allele_breakdown_by_sample.mat"))
+    SampleList = [xx[0][0] for xx in data["sample_names"]]
+else:
+    SampleList=SampleList.split(',')
 
 def config(data_path):
     cs.settings.data_path = os.path.join(data_path, "merge_all")
@@ -48,13 +54,40 @@ for sample in SampleList:
 df_all_0 = pd.concat(tmp_list).rename(columns={"UMI_count": "obs_UMI_count"})
 adata_orig = hf.generate_adata(df_all_0)
 
-adata_sub = adata_orig[:, adata_orig.uns["multicell_clones"]][
-    adata_orig.obs["cells_from_multicell_clone"]
-]
-adata_sub.obsm["X_clone"] = adata_sub.X
+# adata_sub = adata_orig[:, adata_orig.uns["multicell_clones"]][
+#     adata_orig.obs["cells_from_multicell_clone"]
+# ]
+# adata_sub.obsm["X_clone"] = adata_sub.X
+
+sel_idx=adata_orig.X.sum(0).A.flatten()>0
+adata_sub=adata_orig[:,sel_idx]
+adata_sub.obsm['X_clone']=adata_sub.X
+
+
+
 if (adata_sub.X.shape[0]<3) or  (adata_sub.X.shape[1]<2):
     print("No informative clonal data. Skipped")
 else:
+    ## generate plots for the coarse-grained data
+    adata_sub.obs["state_info"] = adata_sub.obs["sample"]
+    adata_sub.uns["data_des"] = ["coarse"]
+    cs.settings.data_path = os.path.join(data_path, "merge_all")
+    cs.settings.figure_path = os.path.join(data_path, "merge_all")
+    cs.pl.barcode_heatmap(
+        adata_sub,
+        selected_times="0",
+        color_bar=True,
+        fig_height=10,
+        fig_width=10,
+        y_ticks=None,  # adata_sub.var_names,
+        x_label="Allele",
+        y_label="Mutation",
+    )
+    cs.tl.fate_coupling(adata_sub, selected_times="0", source="X_clone", method="SW")
+    cs.pl.fate_coupling(adata_sub, source="X_clone")
+
+    
+    ## get sample information
     cell_N_temp = []
     clone_N_temp = []
     mutation_N_temp = []
@@ -77,12 +110,20 @@ else:
             "mutation number": mutation_N_temp,
         }
     )
+    df_info.to_csv(os.path.join(data_path, "merge_all", "X_clone_info.csv"))
 
-    adata_sub.obs["state_info"] = adata_sub.obs["cell_id"]
-    adata_sub.uns["data_des"] = ["refined"]
 
+for sample in SampleList:
+    adata_temp_0=adata_sub[adata_sub.obs['sample']==sample.split("_")[0]]
+    adata_temp_0.obs["state_info"] = adata_temp_0.obs["cell_id"]
+    adata_temp_0.uns["data_des"] = ["refined"]
+    sel_idx=adata_temp_0.X.sum(0).A.flatten()>0
+    adata_temp=adata_temp_0[:,sel_idx]
+    adata_temp.obsm['X_clone']=adata_temp.X
+    cs.settings.data_path = os.path.join(data_path, sample)
+    cs.settings.figure_path = os.path.join(data_path, sample)
     cs.pl.barcode_heatmap(
-        adata_sub,
+        adata_temp,
         selected_times="0",
         color_bar=True,
         fig_height=10,
@@ -90,9 +131,7 @@ else:
         y_ticks=None,  # adata_sub.var_names,
         x_label="Allele",
         y_label="Mutation",
+        x_ticks=None,
     )
-
-    cs.tl.fate_coupling(adata_sub, selected_times="0", source="X_clone", method="SW")
-    cs.pl.fate_coupling(adata_sub, source="X_clone")
-
-    df_info.to_csv(os.path.join(data_path, "merge_all", "X_clone_info.csv"))
+    cs.tl.fate_coupling(adata_temp, selected_times="0", source="X_clone", method="SW")
+    cs.pl.fate_coupling(adata_temp, source="X_clone",x_ticks=None,y_ticks=None,x_label="Allele",y_label="Allele")
