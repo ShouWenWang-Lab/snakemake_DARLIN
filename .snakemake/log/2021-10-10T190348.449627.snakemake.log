@@ -1,4 +1,0 @@
-Building DAG of jobs...
-WildcardError in line 4 of /n/data1/bch/hemonc/camargo/li/my_scripts/snakeTemplate/Snakefile:
-Wildcards in input files cannot be determined from output files:
-'sample_name'
