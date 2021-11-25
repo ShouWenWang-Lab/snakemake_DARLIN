@@ -88,9 +88,10 @@ rule more_plots:
         input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         shell("python {params.script_dir}/make_more_plots.py --input_dir {input_dir} --SampleList {params.Samples} --output_dir {output_dir}")
-        shell("python {params.script_dir}/clonal_analysis.py --data_path {input_dir} --SampleList {params.Samples}")
+        #shell("python {params.script_dir}/clonal_analysis.py --data_path {input_dir} --SampleList {params.Samples}") #The computationally poor
         
         
+# make sure you have a kernel that could run this notebook, and set it as the default kernel for this notebook
 rule generate_report:
     input:
         "CARLIN/{sub_dir}/merge_all/all_insertion_pattern.png"
@@ -100,9 +101,5 @@ rule generate_report:
         script_dir=config['script_dir']
         Samples=','.join(SampleList)
         data_dir=os.path.join(config['data_dir'],'CARLIN', wildcards.sub_dir)
-        shell(f"papermill  {script_dir}/CARLIN_report.ipynb  {data_dir}/merge_all/CARLIN_report.ipynb  -p data_dir {data_dir} -p Samples {Samples} -k cospar_envs")
+        shell(f"papermill  {script_dir}/CARLIN_report.ipynb  {data_dir}/merge_all/CARLIN_report.ipynb  -p data_dir {data_dir} -p Samples {Samples}")
         shell("jupyter nbconvert --to html {data_dir}/merge_all/CARLIN_report.ipynb")
-
-        
-        
-
