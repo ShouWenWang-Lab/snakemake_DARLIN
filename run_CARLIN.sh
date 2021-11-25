@@ -3,7 +3,7 @@
 CARLIN_dir=$1
 input_dir=$2
 output_dir=$3
-SampleList=$4
+sample=$4
 cfg_type=$5
 template=$6
 read_cutoff_override=$7
@@ -16,7 +16,7 @@ max_run_time=${11}
 # CARLIN_dir='/n/data1/bch/hemonc/camargo/li/CARLIN_pipeline/Custom_CARLIN'
 # input_dir='/n/data1/bch/hemonc/camargo/li/CARLIN_pipeline/Custom_CARLIN/tests/Tigre_Carlin_test'
 # output_dir='/n/data1/bch/hemonc/camargo/li/CARLIN_pipeline/Custom_CARLIN/tests/Tigre_Carlin_test/output2'
-# SampleList='test_Tigre_Carlin'
+# sample='test_Tigre_Carlin'
 # cfg_type='BulkDNA_Tigre'
 # template='Tigre'
 # read_cutoff_override=3
@@ -26,14 +26,15 @@ max_run_time=${11}
 # max_run_time=1
 
 #echo sbatch_job=${sbatch_job}
-# file_size_command="$input_dir/$SampleList.trimmed.pear.assembled.fastq";file_size="$(du $file_size_command)";requested_memory="$($CARLIN_memory_factor*$file_size)"
+# file_size_command="$input_dir/$sample.trimmed.pear.assembled.fastq";file_size="$(du $file_size_command)";requested_memory="$($CARLIN_memory_factor*$file_size)"
 
 module load matlab/2019a
+mkdir -p log
 
 if [[ $sbatch_job -eq 0 ]]
 then
     echo "Running interactive mode for CARLIN analysis"
-command_str="my_CARLIN_pipeline('$SampleList','$cfg_type','$input_dir','$output_dir','$template','read_cutoff_override',$read_cutoff_override,'read_cutoff_floor',$read_cutoff_floor,'CARLIN_dir','$CARLIN_dir')"
+command_str="my_CARLIN_pipeline('$sample','$cfg_type','$input_dir','$output_dir','$template','read_cutoff_override',$read_cutoff_override,'read_cutoff_floor',$read_cutoff_floor,'CARLIN_dir','$CARLIN_dir')"
     #echo $command_str
     cur_dir=$(pwd)
     cd $CARLIN_dir
@@ -41,8 +42,6 @@ command_str="my_CARLIN_pipeline('$SampleList','$cfg_type','$input_dir','$output_
     cd $cur_dir
 else
     echo "Running batch jobs for CARLIN analysis"
-    sbatch -p short -c 6 -t $max_run_time:00:00 --mem=${requested_memory}M --job-name $SampleList --wrap="cd ${CARLIN_dir}; matlab -batch \"my_CARLIN_pipeline(\\\"${SampleList}\\\", \\\"${cfg_type}\\\", \\\"${input_dir}\\\", \\\"${output_dir}\\\", \\\"${template}\\\", \\\"read_cutoff_override\\\", $read_cutoff_override, \\\"read_cutoff_floor\\\", $read_cutoff_floor, \\\"CARLIN_dir\\\", \\\"${CARLIN_dir}\\\")\""
+    sbatch -p short -c 6 -t $max_run_time:00:00 --mem=${requested_memory}M --job-name $sample --output=log/${sample}-%j.o  --error=log/${sample}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="cd ${CARLIN_dir}; matlab -batch \"my_CARLIN_pipeline(\\\"${sample}\\\", \\\"${cfg_type}\\\", \\\"${input_dir}\\\", \\\"${output_dir}\\\", \\\"${template}\\\", \\\"read_cutoff_override\\\", $read_cutoff_override, \\\"read_cutoff_floor\\\", $read_cutoff_floor, \\\"CARLIN_dir\\\", \\\"${CARLIN_dir}\\\")\""
     
 fi
-
-
