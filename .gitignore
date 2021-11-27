@@ -3,3 +3,4 @@
 *.svg
 /**/.snakemake
 *.done
+/**/.DS_Store
