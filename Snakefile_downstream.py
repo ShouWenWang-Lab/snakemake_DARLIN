@@ -1,9 +1,8 @@
 import pandas as pd
 from pathlib import Path
-import help_functions as hf
+from source import help_functions as hf
 import os
 import sys
-sys.path.append('/n/data1/bch/hemonc/camargo/li/snakeTemplate')
 #configfile: "config.yaml"  # command line way to set it: --configfile 'path/to/config'
 #workdir: config['data_dir'] # set working directory, a command-line way to set it: --directory 'path/to/your/dir'
 config['data_dir']=str(os.getcwd())
