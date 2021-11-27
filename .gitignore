@@ -4,3 +4,9 @@
 /**/.snakemake
 *.done
 /**/.DS_Store
+test/test_cCARLIN/*
+!test/test_cCARLIN/config.yaml
+!test/test_cCARLIN/raw_fastq
+test/test_TigreCARLIN/*
+!test/test_TigreCARLIN/config.yaml
+!test/test_TigreCARLIN/raw_fastq
