@@ -1,7 +1,7 @@
-project_name : 'XXX'
-project_ID : 'XXX'
-script_dir: '/n/data1/bch/hemonc/camargo/li/snakeTemplate'
-CARLIN_dir : '/n/data1/bch/hemonc/camargo/li/CARLIN_pipeline'
+project_name : 'LL662_404_CC'
+project_ID : '313804501'
+script_dir: '/n/groups/klein/shouwen/lili_project/packages/snakemake_carlin/source'
+CARLIN_dir : '/n/groups/klein/shouwen/lili_project/packages/CARLIN_pipeline'
 SampleList : [] # [] means no selection, and all will be selected;  in contrast, you can select desigred samples, like ['a','b'] etc 
 cfg_type : 'BulkRNA' # BulkDNA_Tigre (with a UMI QC threshold 25), BulkDNA (UMI QC threshold 30);  
 template : 'cCARLIN' # Tigre or cCARLIN (for Tigre, the template is switched)
@@ -10,4 +10,3 @@ read_cutoff_floor : 1  # the algorithm takes the max of ....; this variable is n
 CARLIN_memory_factor : 100 # request memory at X times the size of the pear fastq file.
 sbatch : 1 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
 CARLIN_max_run_time : 12 # hours
-

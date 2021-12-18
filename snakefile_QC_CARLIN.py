@@ -24,7 +24,6 @@ if len(config['SampleList'])==0:
     SampleList=list(df['Sample_long'])
 else:
     SampleList=config['SampleList']
-print(f'SampleList: {SampleList}')
     
 CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_override']]
     
@@ -124,5 +123,3 @@ rule CARLIN:
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
         shell(f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {sbatch} {CARLIN_max_run_time}")
-        
-        hf.training_notification(msg="Snakefile_QC_CARLIN.py---CARLIN job finished")
