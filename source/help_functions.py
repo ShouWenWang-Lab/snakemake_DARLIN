@@ -6,13 +6,19 @@ import numpy as np
 def update_CARLIN_dir(CARLIN_root_folder,template):
     if template=='cCARLIN':
         os.system(f"rsync -avP {CARLIN_root_folder}/Custom_CARLIN/ {CARLIN_root_folder}/cCARLIN")
-        os.system(f"cp {CARLIN_root_folder}/cCARLIN/@CARLIN_def/CARLIN_def_cCARLIN.m {CARLIN_root_folder}/cCARLIN/@CARLIN_def/CARLIN_def.m")
+        #os.system(f"cp {CARLIN_root_folder}/cCARLIN/@CARLIN_def/CARLIN_def_cCARLIN.m {CARLIN_root_folder}/cCARLIN/@CARLIN_def/CARLIN_def.m")
         Actual_CARLIN_dir=f"{CARLIN_root_folder}/cCARLIN"
-    else:
+    elif template=='Tigre':
         os.system(f"rsync -avP {CARLIN_root_folder}/Custom_CARLIN/ {CARLIN_root_folder}/Tigre_CARLIN")
-        os.system(f"cp {CARLIN_root_folder}/Tigre_CARLIN/@CARLIN_def/CARLIN_def_Tigre.m {CARLIN_root_folder}/Tigre_CARLIN/@CARLIN_def/CARLIN_def.m")
         Actual_CARLIN_dir=f"{CARLIN_root_folder}/Tigre_CARLIN"
-        
+    elif template=='Tigre_2022':
+        os.system(f"rsync -avP {CARLIN_root_folder}/Custom_CARLIN/ {CARLIN_root_folder}/Tigre_CARLIN_2022")
+        Actual_CARLIN_dir=f"{CARLIN_root_folder}/Tigre_CARLIN_2022"
+    elif template=='Rosa':
+        os.system(f"rsync -avP {CARLIN_root_folder}/Custom_CARLIN/ {CARLIN_root_folder}/Rosa_CARLIN")
+        Actual_CARLIN_dir=f"{CARLIN_root_folder}/Rosa_CARLIN"
+    else:
+        raise ValueError("The input template should be among {Rosa, Tigre_2022, Tigre, cCARLIN}")
     return Actual_CARLIN_dir
 
 
