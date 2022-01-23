@@ -116,10 +116,12 @@ rule CARLIN:
         output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         read_cutoff_override=int(wildcards.sub_dir.split('_')[-1])
         
-        file_size = os.path.getsize(f'{input_dir}/{wildcards.sample}.trimmed.pear.assembled.fastq')/1000000
-        print(f"{wildcards.sample}:   FileSize {file_size} M")
+        file_size = os.path.getsize(f'{input_dir}/{wildcards.sample}.trimmed.pear.assembled.fastq')/1000000000
+        print(f"{wildcards.sample}:   FileSize {file_size} G")
         requested_memory=int(file_size*CARLIN_memory_factor)
-        print(f"{wildcards.sample}:   Requested memory {requested_memory} M")
+        if requested_memory<10:
+            requested_memory=10 # at least request 10G memory
+        print(f"{wildcards.sample}:   Requested memory {requested_memory} G")
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
         shell(f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {sbatch} {CARLIN_max_run_time}")
