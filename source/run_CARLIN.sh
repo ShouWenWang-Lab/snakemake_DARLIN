@@ -42,6 +42,6 @@ command_str="my_CARLIN_pipeline('$sample','$cfg_type','$input_dir','$output_dir'
     cd $cur_dir
 else
     echo "Running batch jobs for CARLIN analysis"
-    sbatch -p short -c 6 -t $max_run_time:00:00 --mem=${requested_memory}M --job-name $sample --output=log/${sample}-%j.o  --error=log/${sample}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="cd ${CARLIN_dir}; matlab -batch \"my_CARLIN_pipeline(\\\"${sample}\\\", \\\"${cfg_type}\\\", \\\"${input_dir}\\\", \\\"${output_dir}\\\", \\\"${template}\\\", \\\"read_cutoff_override\\\", $read_cutoff_override, \\\"read_cutoff_floor\\\", $read_cutoff_floor, \\\"CARLIN_dir\\\", \\\"${CARLIN_dir}\\\")\""
+    sbatch -p short -c 6 -t $max_run_time:00:00 --mem=${requested_memory}G --job-name $sample --output=log/${sample}-%j.o  --error=log/${sample}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="cd ${CARLIN_dir}; matlab -batch \"my_CARLIN_pipeline(\\\"${sample}\\\", \\\"${cfg_type}\\\", \\\"${input_dir}\\\", \\\"${output_dir}\\\", \\\"${template}\\\", \\\"read_cutoff_override\\\", $read_cutoff_override, \\\"read_cutoff_floor\\\", $read_cutoff_floor, \\\"CARLIN_dir\\\", \\\"${CARLIN_dir}\\\")\""
     
 fi
