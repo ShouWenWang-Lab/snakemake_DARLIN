@@ -42,7 +42,8 @@ rule all:
         "fastqc_before_pear/multiqc_report.html",
         "fastqc_after_pear/multiqc_report.html",
         expand("fastqc_after_pear/{sample}.trimmed.pear.assembled_fastqc.html",sample=SampleList),
-        expand("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done",sample=SampleList,sub_dir=CARLIN_sub_dir)
+        expand("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done",sample=SampleList,sub_dir=CARLIN_sub_dir),
+        expand("CARLIN/{sub_dir}/{sample}/cumulative_indel_freq.pdf",sample=SampleList,sub_dir=CARLIN_sub_dir)
     
 rule fastqc_before_pear:
     input:
@@ -121,7 +122,22 @@ rule CARLIN:
         requested_memory=int(file_size*CARLIN_memory_factor)
         if requested_memory<10:
             requested_memory=10 # at least request 10G memory
+        if requested_memory>200:
+            requested_memory=200 # do not request more than 20G memory
         print(f"{wildcards.sample}:   Requested memory {requested_memory} G")
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
         shell(f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {sbatch} {CARLIN_max_run_time}")
+        
+       
+    
+rule plots:
+    input:
+        "CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done"
+    output:
+        touch("CARLIN/{sub_dir}/{sample}/cumulative_indel_freq.pdf")
+    run:
+        script_dir=config['script_dir']
+        output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
+        new_input_dir=f'{output_dir}/{wildcards.sample}'
+        shell(f"python {script_dir}/plot_cumulative_insert_del_freq.py --input_dir {new_input_dir}")
