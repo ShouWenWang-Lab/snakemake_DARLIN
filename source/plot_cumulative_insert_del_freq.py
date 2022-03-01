@@ -1,10 +1,15 @@
-import pandas as pd
-from scipy.io import loadmat
-import seaborn as sns
-import numpy as np
-from matplotlib import pyplot as plt
-
 import argparse
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from matplotlib import pyplot as plt
+from scipy.io import loadmat
+
+import help_functions as hf
+
+hf.set_rcParams(fontsize=16)
+sns.set_style("whitegrid")
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -57,17 +62,15 @@ del_length_cum = del_length_cum / tot
 ins_length_cum = ins_length_cum / tot
 
 
-sns.set_style("whitegrid")
-
 nucleotide_hist = []
 for x in ["A", "T", "C", "G"]:
     nucleotide_hist.append(np.sum(np.array(list(ins_seqs_all)) == x))
 nucleotide_hist = np.array(nucleotide_hist) / np.sum(nucleotide_hist)
 
 ax = sns.barplot(x=[1, 2, 3, 4], y=nucleotide_hist)
-ax.set_xticks(
-    [0, 1, 2, 3], ["A", "T", "C", "G"], rotation=0
-)  # Set text labels and properties.
+# ticks = [1, 2, 3, 4]
+# labels = ["A", "T", "C", "G"]
+ax.set_xticks([0, 1, 2, 3], ["A", "T", "C", "G"])  # Set text labels and properties.
 ax.set_ylabel("Fraction")
 plt.savefig(f"{input_dir}/insertion_nucleotide_distribution_new.pdf")
 
