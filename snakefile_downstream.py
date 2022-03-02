@@ -46,6 +46,7 @@ rule all:
 rule merge_all_sample:
     output:
         "CARLIN/{sub_dir}/merge_all/Bank.mat",
+        "CARLIN/{sub_dir}/merge_all/allele_breakdown_by_sample.mat",
         "CARLIN/{sub_dir}/merge_all/allele_annotation.mat"
     params:
         script_dir=config['script_dir'],
