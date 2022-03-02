@@ -112,7 +112,9 @@ def set_rcParams(fontsize=12, color_map=None, frameon=None):
     # legend (mpl default: 1, 1, 2, 0.8)
     rcParams["legend.numpoints"] = 1
     rcParams["legend.scatterpoints"] = 1
-    rcParams["legend.handlelength"] = 0.5
+    rcParams[
+        "legend.handlelength"
+    ] = 1.5  # change it from 1 to 1.5 to allow seaborn function properly
     rcParams["legend.handletextpad"] = 0.4
     rcParams["pdf.fonttype"] = 42
 

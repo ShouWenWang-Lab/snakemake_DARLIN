@@ -1,4 +1,5 @@
 import argparse
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -42,6 +43,14 @@ for i, x in enumerate(allele_annot):
         if ">" in y:
             substitute_all += list(np.repeat(1, freq[i]))
 
+
+all_data = {
+    "del_length_all": del_length_all,
+    "ins_length_all": ins_length_all,
+    "substitute_all": substitute_all,
+}
+filehandler = open(f"{input_dir}/insertion_deltion_raw_data.pickle", "wb")
+pickle.dump(all_data, filehandler)
 
 del_length_all = np.array(del_length_all)
 ins_length_all = np.array(ins_length_all)
