@@ -10,7 +10,7 @@ from scipy.io import loadmat
 import help_functions as hf
 
 hf.set_rcParams(fontsize=16)
-sns.set_style("whitegrid")
+sns.set_style("white")
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -95,6 +95,7 @@ df1 = df.melt(id_vars="Size", var_name="Mutation type")
 g = sns.relplot(data=df1, x="Size", y="value", hue="Mutation type", kind="line")
 # g.figure.autofmt_xdate()
 g.ax.set_ylabel("Cumulative fraction of edited cells")
+g.ax.set_ylim([0, 1])
 g.figure.savefig(f"{input_dir}/cumulative_indel_freq.pdf")
 
 df.to_csv(f"{input_dir}/cumulative_indel_freq.csv")
