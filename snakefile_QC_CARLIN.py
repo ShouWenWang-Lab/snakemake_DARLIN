@@ -16,8 +16,6 @@ print("Updated CARLIN_dir:"+ str(config['CARLIN_dir']))
 
 
 print(f'Current work dir: {os.getcwd()}')
-if config['template'] == 'Tigre':
-    print("------------Warn: remember that the Tigre template is inversed-------------")
 
 if len(config['SampleList'])==0: 
     df=pd.read_csv('raw_fastq/sample_info.csv')
@@ -42,8 +40,7 @@ rule all:
         "fastqc_before_pear/multiqc_report.html",
         "fastqc_after_pear/multiqc_report.html",
         expand("fastqc_after_pear/{sample}.trimmed.pear.assembled_fastqc.html",sample=SampleList),
-        expand("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done",sample=SampleList,sub_dir=CARLIN_sub_dir),
-        expand("CARLIN/{sub_dir}/{sample}/cumulative_indel_freq.pdf",sample=SampleList,sub_dir=CARLIN_sub_dir)
+        expand("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done",sample=SampleList,sub_dir=CARLIN_sub_dir)
     
 rule fastqc_before_pear:
     input:
@@ -63,7 +60,7 @@ rule pear:
         fq_R2="raw_fastq/{sample}_L001_R2_001.fastq.gz"
     output:
         "pear_output/{sample}.trimmed.pear.assembled.fastq"
-z    run:
+    run:
         script_dir=config['script_dir']
         shell(f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear")
         
@@ -103,8 +100,7 @@ rule CARLIN:
     input:
         "pear_output/{sample}.trimmed.pear.assembled.fastq"
     output:
-        touch("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done"),
-        "CARLIN/{sub_dir}/{sample}/cumulative_indel_freq.pdf"
+        touch("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done")
     run:
         script_dir=config['script_dir']
         CARLIN_dir=config['CARLIN_dir']
@@ -129,6 +125,3 @@ rule CARLIN:
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
         shell(f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {sbatch} {CARLIN_max_run_time}")
-        
-        new_input_dir=f'{output_dir}/{wildcards.sample}'
-        shell(f"python {script_dir}/plot_cumulative_insert_del_freq.py --input_dir {new_input_dir}")

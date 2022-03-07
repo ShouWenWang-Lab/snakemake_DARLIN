@@ -45,27 +45,27 @@ rule all:
         expand("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done",sample=SampleList,sub_dir=CARLIN_sub_dir)
  
         
-rule fastqc_after_pear:
-    input:
-        "pear_output/{sample}.trimmed.pear.assembled.fastq"
-    output:
-        "fastqc_after_pear/{sample}.trimmed.pear.assembled_fastqc.html"
-    params:
-        script_dir=config['script_dir']
-    shell:
-        "sh {params.script_dir}/run_fastqc.sh {input} fastqc_after_pear"
+# rule fastqc_after_pear:
+#     input:
+#         "pear_output/{sample}.trimmed.pear.assembled.fastq"
+#     output:
+#         "fastqc_after_pear/{sample}.trimmed.pear.assembled_fastqc.html"
+#     params:
+#         script_dir=config['script_dir']
+#     shell:
+#         "sh {params.script_dir}/run_fastqc.sh {input} fastqc_after_pear"
 
         
         
-rule multiqc_after_pear:
-    input:
-        expand("fastqc_after_pear/{sample}.trimmed.pear.assembled_fastqc.html",sample=SampleList)
-    output:
-        "fastqc_after_pear/multiqc_report.html"
-    params:
-        script_dir=config['script_dir']
-    run: 
-        shell("sh {params.script_dir}/run_multiqc.sh fastqc_after_pear")
+# rule multiqc_after_pear:
+#     input:
+#         expand("fastqc_after_pear/{sample}.trimmed.pear.assembled_fastqc.html",sample=SampleList)
+#     output:
+#         "fastqc_after_pear/multiqc_report.html"
+#     params:
+#         script_dir=config['script_dir']
+#     run: 
+#         shell("sh {params.script_dir}/run_multiqc.sh fastqc_after_pear")
         
         
         

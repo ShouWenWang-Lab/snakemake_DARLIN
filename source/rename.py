@@ -35,40 +35,30 @@ parser.add_argument(
     help="suffix of the file",
 )
 
-parser.add_argument(
-    "--root_name",
-    type=str,
-    default="raw_fastq",
-    help="root name, used for checking",
-)
 
 args=parser.parse_args()
 
 args.data_path=os.path.abspath(args.data_path)
-provided_root_name=args.data_path.split('/')[-1]
-if provided_root_name!=args.root_name:
-    raise ValueError(f'The data_path does not have the expected root {args.root_name}')
-else:
-    all_files = sorted(
-        Path(args.data_path).glob(
-            os.path.join(
-                "*",
-                f"*{args.suffix}",
-            )
+all_files = sorted(
+    Path(args.data_path).glob(
+        os.path.join(
+            "*",
+            f"*{args.suffix}",
         )
     )
+)
 
-    
-    os.chdir(args.data_path)
-    os.system(f'mkdir -p temp_dir')
-    print(f'Current path: {args.data_path}')
-    for file in all_files:
-        print(file)
-        file=str(file)
-        print(file)
-        sample=file.split('/')[-2]
-        print(f'Sample: {sample}')
-        if (f'_1{args.suffix}' in file) or (f'_R1{args.suffix}' in file):
-            os.system(f'mv {file} {sample}/{sample}_L001_R1_001.fastq.gz')
-        if (f'_2{args.suffix}' in file) or (f'_R2{args.suffix}' in file):
-            os.system(f'mv {file} {sample}/{sample}_L001_R2_001.fastq.gz')
+
+os.chdir(args.data_path)
+os.system(f'mkdir -p temp_dir')
+print(f'Current path: {args.data_path}')
+for file in all_files:
+    print(file)
+    file=str(file)
+    print(file)
+    sample=file.split('/')[-2]
+    print(f'Sample: {sample}')
+    if (f'_1{args.suffix}' in file) or (f'_R1{args.suffix}' in file):
+        os.system(f'mv {file} {sample}/{sample}_L001_R1_001.fastq.gz')
+    if (f'_2{args.suffix}' in file) or (f'_R2{args.suffix}' in file):
+        os.system(f'mv {file} {sample}/{sample}_L001_R2_001.fastq.gz')
