@@ -63,7 +63,7 @@ rule pear:
         fq_R2="raw_fastq/{sample}_L001_R2_001.fastq.gz"
     output:
         "pear_output/{sample}.trimmed.pear.assembled.fastq"
-    run:
+z    run:
         script_dir=config['script_dir']
         shell(f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear")
         
@@ -103,7 +103,8 @@ rule CARLIN:
     input:
         "pear_output/{sample}.trimmed.pear.assembled.fastq"
     output:
-        touch("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done")
+        touch("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done"),
+        "CARLIN/{sub_dir}/{sample}/cumulative_indel_freq.pdf"
     run:
         script_dir=config['script_dir']
         CARLIN_dir=config['CARLIN_dir']
@@ -129,15 +130,5 @@ rule CARLIN:
         
         shell(f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {sbatch} {CARLIN_max_run_time}")
         
-       
-    
-rule plots:
-    input:
-        "CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done"
-    output:
-        touch("CARLIN/{sub_dir}/{sample}/cumulative_indel_freq.pdf")
-    run:
-        script_dir=config['script_dir']
-        output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         new_input_dir=f'{output_dir}/{wildcards.sample}'
         shell(f"python {script_dir}/plot_cumulative_insert_del_freq.py --input_dir {new_input_dir}")

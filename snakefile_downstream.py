@@ -90,6 +90,10 @@ rule more_plots:
         shell("python {params.script_dir}/make_more_plots.py --input_dir {input_dir} --SampleList {params.Samples} --output_dir {output_dir}")
         #shell("python {params.script_dir}/clonal_analysis.py --data_path {input_dir} --SampleList {params.Samples}") #The computationally poor
         
+        for sample in SampleList:
+            new_input_dir=f'{output_dir}/{sample}'
+            shell(f"python {params.script_dir}/plot_cumulative_insert_del_freq.py --input_dir {new_input_dir}")
+        
         
 # make sure you have a kernel that could run this notebook, and set it as the default kernel for this notebook
 rule generate_report:
@@ -103,3 +107,6 @@ rule generate_report:
         data_dir=os.path.join(config['data_dir'],'CARLIN', wildcards.sub_dir)
         shell(f"papermill  {script_dir}/CARLIN_report.ipynb  {data_dir}/merge_all/CARLIN_report.ipynb  -p data_dir {data_dir} -p Samples {Samples}")
         shell("jupyter nbconvert --to html {data_dir}/merge_all/CARLIN_report.ipynb")
+        
+        
+        
