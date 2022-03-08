@@ -43,10 +43,9 @@ rule all:
         expand("CARLIN/{sub_dir}/merge_all/allele_annotation.mat",sub_dir=CARLIN_sub_dir),
         expand("CARLIN/{sub_dir}/merge_all/CARLIN_report.html",sub_dir=CARLIN_sub_dir),
         
+        
 rule merge_all_sample:
     output:
-        "CARLIN/{sub_dir}/merge_all/Bank.mat",
-        "CARLIN/{sub_dir}/merge_all/allele_breakdown_by_sample.mat",
         "CARLIN/{sub_dir}/merge_all/allele_annotation.mat"
     params:
         script_dir=config['script_dir'],
@@ -54,6 +53,7 @@ rule merge_all_sample:
         Samples=','.join(SampleList),
         template=config['template']
     run:
+        print("----Merge all samples -----")
         input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         shell("sh {params.script_dir}/merge_sample.sh  {params.CARLIN_dir} {input_dir} {params.Samples}  {params.template}")
         
@@ -61,7 +61,7 @@ rule merge_all_sample:
         
 rule CARLIN_csv:
     input:
-        "CARLIN/{sub_dir}/merge_all/Bank.mat"
+        "CARLIN/{sub_dir}/merge_all/allele_annotation.mat"
     output:
         "CARLIN/{sub_dir}/merge_all/refined_results.csv"
     params:
@@ -70,6 +70,7 @@ rule CARLIN_csv:
         template=config['template'],
         Samples=','.join(SampleList+["merge_all"])
     run:
+        print("----generate csv results -----")
         input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         print(f"SampleList:   {params.Samples}")
         shell("sh {params.script_dir}/generate_csv.sh {params.CARLIN_dir} {input_dir} {params.Samples}  {params.template}")
@@ -85,6 +86,7 @@ rule more_plots:
         script_dir=config['script_dir'],
         Samples=','.join(SampleList)
     run:
+        print("----more plots -----")
         input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         shell("python {params.script_dir}/make_more_plots.py --input_dir {input_dir} --SampleList {params.Samples} --output_dir {output_dir}")
@@ -102,6 +104,7 @@ rule generate_report:
     output:
         "CARLIN/{sub_dir}/merge_all/CARLIN_report.html"
     run:
+        print("----generate report -----")
         script_dir=config['script_dir']
         Samples=','.join(SampleList)
         data_dir=os.path.join(config['data_dir'],'CARLIN', wildcards.sub_dir)

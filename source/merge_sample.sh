@@ -8,7 +8,8 @@ template=$4
 module load matlab/2019a
 
 echo "Running interactive mode for merging samples and allele bank generation"
-command_str="make_allele_bank('$SampleList','$input_dir','$template')"
+#command_str="make_allele_bank('$SampleList','$input_dir','$template')"
+command_str="merge_samples('$SampleList','$input_dir','$template')"
 echo $command_str
 cur_dir=$(pwd)
 cd $CARLIN_dir
