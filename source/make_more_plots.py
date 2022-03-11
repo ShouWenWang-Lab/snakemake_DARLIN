@@ -132,7 +132,6 @@ selected_variables=['UMI_eventful',
                      'CARLIN_potential_by_UMI',
                      'CARLIN_potential_by_allel',
                      'ins_del_ratio_ratio_by_eventful_UMI',
-                     'ins_del_ratio_by_allele',
                      'ave_insert_len',
                      'ave_del_len']
 
