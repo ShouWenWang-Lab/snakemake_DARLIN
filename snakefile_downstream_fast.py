@@ -54,9 +54,9 @@ rule plots:
     run:
         hf.set_rcParams()
         input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
-        print("---- Allele analysis -----")
-        hf.analyze_allele_frequency_count(input_dir,SampleList)
-        print("---- Sample statistics csv -----")
+        # print("---- Allele analysis -----")
+        # hf.analyze_allele_frequency_count(input_dir,SampleList)
+        print("---- Sample statistics csv (also do allele analysis) -----")
         hf.generate_csv(input_dir,SampleList)
         print("---- Plot sample statistics -----")
         hf.plot_data_statistics_across_samples(input_dir)

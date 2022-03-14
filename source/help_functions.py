@@ -157,6 +157,15 @@ def generate_csv(data_path: str,SampleList: list):
     data_path: should be at the level of samples, e.g., path/to/results_read_cutoff_3
     """
     
+    selected_fields=['in_fastq:','eventful_UMIs_total:' ,'UMI_chosen:', 'eventful:', 'called:',
+                         'Mean reads per edited UMI:','Mean reads per unedited UMI:','% UMIs edited:',
+                         'Total (including template):','Singletons (including template):', 'Effective Alleles:','Diversity Index (normalized by all):',
+                         'Diversity Index (normalized by edited):','Mean CARLIN potential (by UMI):','Mean CARLIN potential (by allele):']
+
+    annotation=["tot_fastq_N","edit_read_fraction","read_threshold","UMI_eventful","UMI_called",
+                    "Mean_read_per_edited_UMI","Mean_read_per_unedited_UMI","edit_UMI_fraction",
+                    "total_alleles","singleton","effective_allele_N","Diversity_index_all","Diversity_index_edited",
+                    "CARLIN_potential_by_UMI","CARLIN_potential_by_allel"]
     df_list=[]
     for sample in SampleList:
         pooled_data = loadmat(f'{data_path}/{sample}/indel_freq_vs_length.mat')
@@ -171,16 +180,6 @@ def generate_csv(data_path: str,SampleList: list):
         filename=f'{data_path}/{sample}/Results.txt'
         with open(filename) as file:
             lines = [line.rstrip() for line in file]
-
-        selected_fields=['in_fastq:','eventful_UMIs_total:' ,'UMI_chosen:', 'eventful:', 'called:',
-                         'Mean reads per edited UMI:','Mean reads per unedited UMI:','% UMIs edited:',
-                         'Total (including template):','Singletons (including template):', 'Effective Alleles:','Diversity Index (normalized by all):',
-                         'Diversity Index (normalized by edited):','Mean CARLIN potential (by UMI):','Mean CARLIN potential (by allele):']
-
-        annotation=["tot_fastq_N","edit_read_fraction","read_threshold","UMI_eventful","UMI_called",
-                    "Mean_read_per_edited_UMI","Mean_read_per_unedited_UMI","edit_UMI_fraction",
-                    "total_alleles","singleton","effective_allele_N","Diversity_index_all","Diversity_index_edited",
-                    "CARLIN_potential_by_UMI","CARLIN_potential_by_allel"]
 
         value=[]
         for y in selected_fields:
@@ -204,7 +203,29 @@ def generate_csv(data_path: str,SampleList: list):
         my_dict['source']=sample[:2]
         df_temp=pd.DataFrame(my_dict)
         df_list.append(df_temp.set_index('sample'))
-    df_all=pd.concat(df_list).reset_index()
+        
+    ## merge all
+    df_all_0=pd.concat(df_list).reset_index()
+    my_dict={}
+    my_dict['sample']='merge_all'
+    for j, x in enumerate(annotation):
+        my_dict[x]=[np.nan]
+    annotation_extensive=["tot_fastq_N","UMI_eventful","UMI_called","total_alleles"]
+    annotation_intensive=["edit_read_fraction","read_threshold",
+                    "Mean_read_per_edited_UMI","Mean_read_per_unedited_UMI","edit_UMI_fraction"]
+    for j, x in enumerate(annotation_extensive):
+        my_dict[x]=[df_all_0[x].sum()]
+    for j, x in enumerate(annotation_intensive):
+        my_dict[x]=[np.sum(np.array(df_all_0['tot_fastq_N'])*np.array(df_all_0[x]))/df_all_0['tot_fastq_N'].sum()]
+        
+        
+    singleton=analyze_allele_frequency_count(data_path,SampleList)
+    my_dict["singleton"]=singleton
+    
+    df_temp=pd.DataFrame(my_dict)
+    df_all=pd.concat([df_all_0,df_temp])
+
+    
     os.makedirs(data_path+'/merge_all',exist_ok=True)
     df_all.to_csv(data_path+'/merge_all/refined_results.csv')
     
@@ -261,6 +282,8 @@ def analyze_allele_frequency_count(data_path: str, SampleList: list):
     plt.xscale('log')
     plt.xscale('log')
     #ax.set_xlim([0,10.5])
+    
+    singleton=df_count.reset_index()['Frequency'].iloc[0]
     singleton_fraction=df_count.reset_index()['Frequency'].iloc[0]/df_count.reset_index()['Frequency'].sum()
     ax.set_xlabel('UMI count per allele')
     ax.set_ylabel('Allele number per UMI count')
@@ -270,7 +293,7 @@ def analyze_allele_frequency_count(data_path: str, SampleList: list):
     
         
     ## allele breakdown by samples
-    f, axs = plt.subplots(1, 2, figsize=(8, 4),gridspec_kw=dict(width_ratios=[4, 3]))
+    f, axs = plt.subplots(1, 2, figsize=(8, 4),gridspec_kw=dict(width_ratios=[4, 4]))
     allele_summary=np.array(df_new['sample_count'])
     ratio=np.sum(allele_summary==1)/len(df_new)
     ax=sns.histplot(allele_summary,ax=axs[0])
@@ -286,6 +309,7 @@ def analyze_allele_frequency_count(data_path: str, SampleList: list):
     ax.set_title(f'Occu. ratio (1/2)={ratio_1_2:.2f}')
     plt.tight_layout()
     plt.savefig(f'{data_path}/merge_all/allele_breakdown_by_sample.png')
+    return singleton
     
     
 def plot_data_statistics_across_samples(data_path):
@@ -296,7 +320,7 @@ def plot_data_statistics_across_samples(data_path):
         df=pd.read_csv(file_path,index_col=0)
         df_list=[df]
 
-        x_var_list=["UMI_eventful",'CARLIN_potential_by_UMI',"edit_UMI_fraction","'total_alleles'"]
+        x_var_list=["UMI_eventful",'CARLIN_potential_by_UMI',"edit_UMI_fraction","total_alleles"]
         annotation=['']
         #title='Read threshold=3'
 
@@ -328,9 +352,12 @@ def plot_data_statistics_across_samples(data_path):
                 ax=plt.subplot(n_rows, n_columns,j+1)
                 for k,df0 in enumerate(df_list):
                     all_samples=list(df0['sample'])
+                    all_samples.remove('merge_all')
                     df0=df0.set_index('sample')
                     df_1=df0.loc[all_samples]
                     ax.plot(df_1[x_var],df_1[yy],'k^',label=annotation[k])
+                    df_1=df0.loc['merge_all']
+                    ax.plot(df_1[x_var],df_1[yy],'r*')
 
                 #ax.legend()
                 ax.set_ylabel(yy)
