@@ -10,3 +10,4 @@ test/test_cCARLIN/*
 test/test_TigreCARLIN/*
 !test/test_TigreCARLIN/config.yaml
 !test/test_TigreCARLIN/raw_fastq
+*.egg-info
