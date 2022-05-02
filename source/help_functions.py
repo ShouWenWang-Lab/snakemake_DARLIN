@@ -1,4 +1,5 @@
 import os
+import pickle
 from pathlib import Path
 
 import numpy as np
@@ -164,9 +165,14 @@ def set_rcParams(fontsize=12, color_map=None, frameon=None):
     _frameon = frameon
 
 
-def generate_csv(data_path: str, SampleList: list):
+def generate_csv(
+    data_path: str, SampleList: list, no_merge_list: list = None, plot=True
+):
     """
     data_path: should be at the level of samples, e.g., path/to/results_read_cutoff_3
+
+    The no_merge_list should be a list of samples that are from negative control. You want them
+    to be included in the csv file, but not when generating the merge_all statistics and relevant files.
     """
 
     selected_fields = [
@@ -245,8 +251,39 @@ def generate_csv(data_path: str, SampleList: list):
 
     ## merge all
     df_all_0 = pd.concat(df_list).reset_index()
+    if no_merge_list is not None:
+        SampleList_new = list(set(SampleList).difference(no_merge_list))
+        print(f"Use a new list: {SampleList_new}")
+    else:
+        SampleList_new = SampleList
+
+    df_temp = compute_merge_all_statistics(
+        data_path,
+        SampleList_new,
+        df_all_0,
+        default_key="merge_all",
+        plot=plot,
+    )
+    df_all = pd.concat([df_all_0, df_temp])
+
+    os.makedirs(data_path + "/merge_all", exist_ok=True)
+    df_all.to_csv(data_path + "/merge_all/refined_results.csv")
+
+
+def compute_merge_all_statistics(
+    data_path,
+    SampleList,
+    df_sample_csv_0,
+    default_key="merge_all",
+    plot=True,
+):
+    """
+    generate a merge_all statistics
+    """
+    df_sample_csv = df_sample_csv_0[df_sample_csv_0["sample"].isin(SampleList)]
+    annotation = list(set(df_sample_csv.columns).difference(["sample"]))
     my_dict = {}
-    my_dict["sample"] = "merge_all"
+    my_dict["sample"] = default_key
     for j, x in enumerate(annotation):
         my_dict[x] = [np.nan]
     annotation_extensive = [
@@ -262,22 +299,29 @@ def generate_csv(data_path: str, SampleList: list):
         "edit_UMI_fraction",
     ]
     for j, x in enumerate(annotation_extensive):
-        my_dict[x] = [df_all_0[x].sum()]
+        my_dict[x] = [df_sample_csv[x].sum()]
     for j, x in enumerate(annotation_intensive):
         my_dict[x] = [
-            np.sum(np.array(df_all_0["tot_fastq_N"]) * np.array(df_all_0[x]))
-            / df_all_0["tot_fastq_N"].sum()
+            np.sum(np.array(df_sample_csv["tot_fastq_N"]) * np.array(df_sample_csv[x]))
+            / df_sample_csv["tot_fastq_N"].sum()
         ]
 
-    df_count = analyze_allele_frequency_count(data_path, SampleList)
+    df_count = analyze_allele_frequency_count(data_path, SampleList, plot=plot)
     my_dict["singleton"] = df_count.reset_index()["Frequency"].iloc[0]
     my_dict["total_alleles"] = df_count.reset_index()["Frequency"].sum()
+    df_all = pd.read_csv(data_path + "/merge_all/allele_UMI_count.csv")
+    my_dict["effective_allele_N"] = effective_allele_number(
+        df_all[df_all.allele != "[]"]["UMI_count"]
+    )
+    my_dict["Diversity_index_all"] = (
+        my_dict["effective_allele_N"] / my_dict["UMI_called"]
+    )
+    my_dict["Diversity_index_edited"] = (
+        my_dict["effective_allele_N"] / my_dict["UMI_eventful"]
+    )
 
     df_temp = pd.DataFrame(my_dict)
-    df_all = pd.concat([df_all_0, df_temp])
-
-    os.makedirs(data_path + "/merge_all", exist_ok=True)
-    df_all.to_csv(data_path + "/merge_all/refined_results.csv")
+    return df_temp
 
 
 def load_allele_info(data_path):
@@ -311,65 +355,84 @@ def generate_FrequencyCounts(df_raw, save_dir=None):
     return df_count
 
 
-def analyze_allele_frequency_count(data_path: str, SampleList: list):
+def load_allele_frequency_over_multiple_samples(data_path: str, SampleList: list):
     """
     data_path: should be at the level of samples, e.g., path/to/results_read_cutoff_3
     """
 
-    os.makedirs(data_path + "/merge_all", exist_ok=True)
     df_list = []
     for sample in SampleList:
         df_temp = load_allele_info(os.path.join(data_path, sample))
         df_list.append(df_temp)
+        # null_fraction = (
+        #     df_temp[df_temp.allele == "[]"]["UMI_count"].iloc[0]
+        #     / df_temp["UMI_count"].sum()
+        # )
+        # print(f"{sample}: {len(df_temp)}; null fraction {null_fraction:.2f}")
         print(f"{sample}: {len(df_temp)}")
     df_raw = pd.concat(df_list).reset_index()
     df_raw["sample_count"] = 1
     df_new = df_raw.groupby("allele", as_index=False).agg(
         {"UMI_count": "sum", "sample_count": "sum"}
     )
+    return df_new
+
+
+def analyze_allele_frequency_count(data_path: str, SampleList: list, plot=True):
+    """
+    data_path: should be at the level of samples, e.g., path/to/results_read_cutoff_3
+    """
+
+    print(f"sample list in generating allele_UMI_count: {SampleList}")
+    os.makedirs(data_path + "/merge_all", exist_ok=True)
+    df_new = load_allele_frequency_over_multiple_samples(data_path, SampleList)
     df_new.to_csv(f"{data_path}/merge_all/allele_UMI_count.csv")
 
     df_count = generate_FrequencyCounts(df_new, save_dir=f"{data_path}/merge_all")
-    ax = sns.scatterplot(
-        data=df_count.reset_index(),
-        x="UMI_count",
-        y="Frequency",
-        edgecolor="k",
-        color="#d7191c",
-    )
-    plt.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
-    plt.xscale("log")
-    plt.xscale("log")
-    # ax.set_xlim([0,10.5])
 
-    singleton = df_count.reset_index()["Frequency"].iloc[0]
-    singleton_fraction = (
-        df_count.reset_index()["Frequency"].iloc[0]
-        / df_count.reset_index()["Frequency"].sum()
-    )
-    ax.set_xlabel("UMI count per allele")
-    ax.set_ylabel("Allele number per UMI count")
-    ax.set_title(f"Singleton fraction: {singleton_fraction:.2f}")
-    plt.tight_layout()
-    plt.savefig(f"{data_path}/merge_all/Frequency_count.pdf")
+    if plot:
+        fig, ax = plt.subplots()
+        ax = sns.scatterplot(
+            data=df_count.reset_index(),
+            x="UMI_count",
+            y="Frequency",
+            edgecolor="k",
+            color="#d7191c",
+        )
+        plt.ticklabel_format(style="sci", axis="y", scilimits=(0, 0))
+        plt.xscale("log")
+        plt.xscale("log")
+        # ax.set_xlim([0,10.5])
 
-    ## allele breakdown by samples
-    f, axs = plt.subplots(1, 2, figsize=(8, 4), gridspec_kw=dict(width_ratios=[4, 4]))
-    allele_summary = np.array(df_new["sample_count"])
-    ratio = np.sum(allele_summary == 1) / len(df_new)
-    ax = sns.histplot(allele_summary, ax=axs[0])
-    ax.set_ylabel("Allele acount")
-    ax.set_xlabel("Occurance in # of samples")
-    ax.set_title(f"Frac. in 1 sample={ratio:.2f}")
+        singleton_fraction = (
+            df_count.reset_index()["Frequency"].iloc[0]
+            / df_count.reset_index()["Frequency"].sum()
+        )
+        ax.set_xlabel("UMI count per allele")
+        ax.set_ylabel("Allele number per UMI count")
+        ax.set_title(f"Singleton fraction: {singleton_fraction:.2f}")
+        plt.tight_layout()
+        plt.savefig(f"{data_path}/merge_all/Frequency_count.pdf")
 
-    ratio_1_2 = np.sum(allele_summary == 1) / np.sum(allele_summary == 2)
-    ax = sns.histplot(allele_summary, ax=axs[1])
-    plt.yscale("log")
-    ax.set_ylabel("Allele acount")
-    ax.set_xlabel("Occurance in # of samples")
-    ax.set_title(f"Occu. ratio (1/2)={ratio_1_2:.2f}")
-    plt.tight_layout()
-    plt.savefig(f"{data_path}/merge_all/allele_breakdown_by_sample.png")
+        ## allele breakdown by samples
+        f, axs = plt.subplots(
+            1, 2, figsize=(8, 4), gridspec_kw=dict(width_ratios=[4, 4])
+        )
+        allele_summary = np.array(df_new["sample_count"])
+        ratio = np.sum(allele_summary == 1) / len(df_new)
+        ax = sns.histplot(allele_summary, ax=axs[0])
+        ax.set_ylabel("Allele acount")
+        ax.set_xlabel("Occurance in # of samples")
+        ax.set_title(f"Frac. in 1 sample={ratio:.2f}")
+
+        ratio_1_2 = np.sum(allele_summary == 1) / np.sum(allele_summary == 2)
+        ax = sns.histplot(allele_summary, ax=axs[1])
+        plt.yscale("log")
+        ax.set_ylabel("Allele acount")
+        ax.set_xlabel("Occurance in # of samples")
+        ax.set_title(f"Occu. ratio (1/2)={ratio_1_2:.2f}")
+        plt.tight_layout()
+        plt.savefig(f"{data_path}/merge_all/allele_breakdown_by_sample.png")
     return df_count
 
 
@@ -424,8 +487,8 @@ def plot_data_statistics_across_samples(data_path):
                     df0 = df0.set_index("sample")
                     df_1 = df0.loc[all_samples]
                     ax.plot(df_1[x_var], df_1[yy], "k^", label=annotation[k])
-                    #df_1 = df0.loc["merge_all"]
-                    #ax.plot(df_1[x_var], df_1[yy], "r*")
+                    # df_1 = df0.loc["merge_all"]
+                    # ax.plot(df_1[x_var], df_1[yy], "r*")
 
                 # ax.legend()
                 ax.set_ylabel(yy)
@@ -493,3 +556,115 @@ def plot_insertion_patterns(data_path: str, SampleList: list):
 
     os.makedirs(f"{data_path}/merge_all", exist_ok=True)
     plt.savefig(f"{data_path}/merge_all/all_insertion_pattern.png")
+
+
+def plot_cumulative_insert_del_freq(df_input, save_dir):
+
+    freq = df_input["UMI_count"].to_numpy()
+    allele_annot = df_input["allele"]
+    del_length_all = []
+    ins_length_all = []
+    substitute_all = []
+    tot_insertion_per_allele = []
+    tot_deletion_per_allele = []
+    ins_seqs_all = ""
+    for i, x in enumerate(allele_annot):
+        vector_x = x[0].split(",")
+        temp_del = []
+        temp_ins = []
+        for y in vector_x:
+            if "del" in y:
+                temp = y.split("del")[0].split("_")
+                del_len = int(temp[1]) - int(temp[0])
+                temp_del.append(del_len)
+                del_length_all += list(np.repeat(del_len, freq[i]))
+
+            if "ins" in y:
+                temp = y.split("ins")[1]
+                ins_seqs_all += temp * freq[i]  # consider the allele frequency
+                temp_ins.append(len(temp))
+                ins_length_all += list(np.repeat(len(temp), freq[i]))
+
+            if ">" in y:
+                substitute_all += list(np.repeat(1, freq[i]))
+
+        tot_deletion_per_allele += list(np.repeat(np.sum(temp_del), freq[i]))
+        tot_insertion_per_allele += list(np.repeat(np.sum(temp_ins), freq[i]))
+
+    all_data = {
+        "del_length_all": del_length_all,
+        "ins_length_all": ins_length_all,
+        "substitute_all": substitute_all,
+        "tot_deletion_per_allele": tot_deletion_per_allele,
+        "tot_insertion_per_allele": tot_insertion_per_allele,
+    }
+    filehandler = open(f"{save_dir}/insertion_deltion_raw_data.pickle", "wb")
+    pickle.dump(all_data, filehandler)
+
+    del_length_all = np.array(del_length_all)
+    ins_length_all = np.array(ins_length_all)
+    substitute_all = np.array(substitute_all)
+    max_L = np.max([np.max(del_length_all), np.max(ins_length_all), 250])
+
+    del_length_fraction = np.zeros(max_L)
+    ins_length_fraction = np.zeros(max_L)
+    for j, x in enumerate(range(max_L)):
+        del_length_fraction[j] = np.sum(del_length_all == x)
+        ins_length_fraction[j] = np.sum(ins_length_all == x)
+
+    del_length_cum = np.cumsum([0] + list(del_length_fraction / np.sum(freq)))
+    ins_length_cum = np.cumsum([0] + list(ins_length_fraction / np.sum(freq)))
+    tot = del_length_cum[-1] + ins_length_cum[-1]
+    del_length_cum = del_length_cum / tot
+    ins_length_cum = ins_length_cum / tot
+
+    nucleotide_hist = []
+    for x in ["A", "T", "C", "G"]:
+        nucleotide_hist.append(np.sum(np.array(list(ins_seqs_all)) == x))
+    nucleotide_hist = np.array(nucleotide_hist) / np.sum(nucleotide_hist)
+
+    ax = sns.barplot(x=[1, 2, 3, 4], y=nucleotide_hist)
+    # ticks = [1, 2, 3, 4]
+    # labels = ["A", "T", "C", "G"]
+    plt.xticks(
+        ticks=[0, 1, 2, 3], labels=["A", "T", "C", "G"]
+    )  # Set text labels and properties.
+    ax.set_ylabel("Fraction")
+    plt.savefig(f"{save_dir}/insertion_nucleotide_distribution_new.pdf")
+    plt.savefig(f"{save_dir}/insertion_nucleotide_distribution_new.png", dpi=100)
+
+    df = pd.DataFrame(
+        {
+            "Deletion": del_length_cum,
+            "Insertion": ins_length_cum,
+            "Size": np.arange(len(ins_length_cum)),
+        }
+    )
+    df1 = df.melt(id_vars="Size", var_name="Mutation type")
+    g = sns.relplot(data=df1, x="Size", y="value", hue="Mutation type", kind="line")
+    # g.figure.autofmt_xdate()
+    g.ax.set_ylabel("Cumulative fraction of edited cells")
+    g.ax.set_ylim([0, 1])
+    g.figure.savefig(f"{save_dir}/cumulative_indel_freq.pdf")
+    g.figure.savefig(f"{save_dir}/cumulative_indel_freq.png", dpi=100)
+
+    df.to_csv(f"{save_dir}/cumulative_indel_freq.csv")
+
+    df = pd.DataFrame(
+        {"Deletion": tot_deletion_per_allele, "Insertion": tot_insertion_per_allele}
+    ).melt()
+    fig, ax = plt.subplots(figsize=(4, 3))
+    ax = sns.violinplot(
+        data=df, x="variable", y="value", palette=["#d7301f", "#225ea8"]
+    )
+    ax.set_ylabel("Cumulative edits per allele (bp)")
+    ax.set_xlabel("")
+    plt.tight_layout()
+    fig.savefig(f"{save_dir}/cumulative_edit_length.pdf")
+    fig.savefig(f"{save_dir}/cumulative_edit_length.png", dpi=100)
+
+
+def effective_allele_number(UMI_counts):
+    x = np.array(UMI_counts) / np.sum(UMI_counts)
+    entropy = -np.sum(np.log2(x) * x)
+    return 2 ** entropy
