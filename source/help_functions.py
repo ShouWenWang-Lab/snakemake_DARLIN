@@ -191,6 +191,13 @@ def generate_csv(
         "Diversity Index (normalized by edited):",
         "Mean CARLIN potential (by UMI):",
         "Mean CARLIN potential (by allele):",
+        "valid_5_primer",
+        "valid_3_primer",
+        "valid_2_seq",
+        "valid_read_structure",
+        "valid_lines",
+        "common_UMIs",
+        "called_UMIs_total",
     ]
 
     annotation = [
@@ -209,6 +216,13 @@ def generate_csv(
         "Diversity_index_edited",
         "CARLIN_potential_by_UMI",
         "CARLIN_potential_by_allel",
+        "valid_5_primer (read_frac)",
+        "valid_3_primer (read_frac)",
+        "valid_2_seq (read_frac)",
+        "valid_read_structure (read_frac)",
+        "valid_lines (read_frac)",
+        "common_UMIs (read_frac)",
+        "called_UMIs_total (read_frac)",
     ]
     df_list = []
     for sample in SampleList:
