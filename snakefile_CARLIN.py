@@ -66,8 +66,8 @@ rule CARLIN:
         requested_memory=int(file_size*CARLIN_memory_factor)
         if requested_memory<10:
             requested_memory=10 # at least request 10G memory
-        if requested_memory>200:
-            requested_memory=200 # do not request more than 20G memory
+        if requested_memory>250:
+            requested_memory=250 # do not request more than 200G memory
         print(f"{wildcards.sample}:   Requested memory {requested_memory} G")
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         

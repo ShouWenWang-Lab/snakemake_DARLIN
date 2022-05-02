@@ -6,6 +6,12 @@ parser = argparse.ArgumentParser(description="run sbatch jobs")
 # to pass a complex command (separated by space), please avoid the bash expansion by: --command '{command}'
 
 parser.add_argument(
+    "--sbatch_mode",
+    type=str,
+    default="short",
+)
+
+parser.add_argument(
     "--job_name",
     type=str,
     default="name",
@@ -41,6 +47,6 @@ parser.add_argument(
 args=parser.parse_args()
 print("Run with sbatch jobs")
 os.system("mkdir -p log")
-sbatch_command=f"sbatch -p short -c {args.cores} -t {args.time}:00:00 --mem={args.mem} --job-name {args.job_name} --output=log/{args.job_name}-%j.o  --error=log/{args.job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap=\"{args.command}\""
+sbatch_command=f"sbatch -p {args.sbatch_mode} -c {args.cores} -t {args.time}:00:00 --mem={args.mem} --job-name {args.job_name} --output=log/{args.job_name}-%j.o  --error=log/{args.job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap=\"{args.command}\""
 print(f"submit job:   {sbatch_command}")
 os.system(sbatch_command)
