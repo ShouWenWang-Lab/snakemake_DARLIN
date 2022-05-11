@@ -618,7 +618,8 @@ def plot_cumulative_insert_del_freq(df_input, save_dir):
     del_length_all = np.array(del_length_all)
     ins_length_all = np.array(ins_length_all)
     substitute_all = np.array(substitute_all)
-    max_L = np.max([np.max(del_length_all), np.max(ins_length_all), 250])
+    # max_L = np.max([np.max(del_length_all), np.max(ins_length_all), 250])
+    max_L = 270
 
     del_length_fraction = np.zeros(max_L)
     ins_length_fraction = np.zeros(max_L)
