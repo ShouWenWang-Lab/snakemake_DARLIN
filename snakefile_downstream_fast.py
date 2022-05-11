@@ -1,9 +1,13 @@
-import pandas as pd
-from pathlib import Path
-from source import help_functions as hf
 import os
 import sys
+from pathlib import Path
+
+import pandas as pd
+from scipy.io import loadmat
 from tqdm import tqdm
+
+from source import help_functions as hf
+
 #configfile: "config.yaml"  # command line way to set it: --configfile 'path/to/config'
 #workdir: config['data_dir'] # set working directory, a command-line way to set it: --directory 'path/to/your/dir'
 config['data_dir']=str(os.getcwd())
@@ -62,11 +66,18 @@ rule plots:
         hf.plot_data_statistics_across_samples(input_dir)
         
         print("---- Cumulative insertion/deletion plot per sample -----")
-        for sample in tqdm(SampleList):
-            new_input_dir=f'{input_dir}/{sample}'
-            print(f"Current sample: {sample}")
-            shell(f"python {params.script_dir}/plot_cumulative_insert_del_freq.py --input_dir {new_input_dir}")
+
         
+        for sample in SampleList:
+            data = loadmat(f"{input_dir}/{sample}/allele_annotation.mat")
+            freq = data["allele_freqs"].flatten()[1:]
+            allele_annot = data["AlleleAnnotation"].flatten()[1:]
+            df_input=pd.DataFrame({'allele':allele_annot,'UMI_count':freq})
+            df_input.to_csv(f"{input_dir}/{sample}/allele_UMI_count.csv",index=0)
+            hf.plot_cumulative_insert_del_freq(df_input, input_dir+'/'+sample)
+        df_input=pd.read_csv(f"{input_dir}/merge_all/allele_UMI_count.csv")
+        hf.plot_cumulative_insert_del_freq(df_input, input_dir+'/merge_all')
+
         print("---- Insertion pattern -----")
         hf.plot_insertion_patterns(input_dir,SampleList)
         
