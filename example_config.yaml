@@ -1,0 +1,12 @@
+project_name : 'SC_3A'
+project_ID : '357662615'
+script_dir: '/n/groups/klein/shouwen/lili_project/packages/snakemake_carlin/source'
+CARLIN_dir : '/n/groups/klein/shouwen/lili_project/packages/CARLIN_pipeline'
+SampleList : ['LL653-E1-P1-TC_S17','LL653-E1-P2-TC_S18','LL653-E1-P3-TC_S19','LL653-E6-P1-TC_S20','LL653-E6-P2-TC_S21','LL719-P1-TC_S12','LL719-P2-TC_S13','LL731-P1-TC_S14','LL731-P2-TC_S15','LL731-P3-TC_S16','LL749-4E-TC_S22'] #DO NOT ASS 1_S*, it will have few reads, affect the output
+cfg_type : 'scLimeCat' # used_cfg_type: {BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat};  # our bulk DNA and RNA protocol results in the same sequence structure, and share common cfg file
+template : 'Tigre_2022_v2' # short_primer_set: {Tigre_2022_v2, Rosa_v2, cCARLIN}, long_primer_set: {Tigre_2022,Rosa,cCARLIN}
+read_cutoff_UMI_override : [1,2,3,4] # assume to be a list
+read_cutoff_CB_override : 10  # assumed to be a fixed number. This is only needed when cfg_type corresponds to single-cell exp. 
+CARLIN_memory_factor : 300 # request memory at X times the size of the pear fastq file.
+sbatch : 1 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
+CARLIN_max_run_time : 6 # hour

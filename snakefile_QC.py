@@ -23,7 +23,12 @@ if len(config['SampleList'])==0:
 else:
     SampleList=config['SampleList']
     
-CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_override']]
+# this is to make the pipeline compatible with earlier bulk config files
+if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.keys()) and ('read_cutoff_override' in config.keys()):
+    config['read_cutoff_UMI_override']=config['read_cutoff_override']
+    config['read_cutoff_CB_override']=10 
+    
+CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
     
 
 # remove the flag file of the workflow if the sbatch is not actually run to finish

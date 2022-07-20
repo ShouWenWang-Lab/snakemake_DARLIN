@@ -18,7 +18,8 @@ config['data_dir']=str(os.getcwd())
 
 config['CARLIN_dir']=hf.update_CARLIN_dir(config['CARLIN_dir'],config['template'])
 print("Updated CARLIN_dir:"+ str(config['CARLIN_dir']))
-
+cfg_type=config['cfg_type']
+script_dir=config['script_dir']
 
 print(f'Current work dir: {os.getcwd()}')
 if config['template'] == 'Tigre':
@@ -31,7 +32,12 @@ else:
     SampleList=config['SampleList']
 print(f'SampleList: {SampleList}')
     
-CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_override']]
+# this is to make the pipeline compatible with earlier bulk config files
+if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.keys()) and ('read_cutoff_override' in config.keys()):
+    config['read_cutoff_UMI_override']=config['read_cutoff_override']
+    config['read_cutoff_CB_override']=10 
+    
+CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
 print(f"Subdir: {CARLIN_sub_dir}")
 #CARLIN_sub_dir="results_cutoff_override_"+str(config['read_cutoff_override'])
 
@@ -61,7 +67,7 @@ rule plots:
         # print("---- Allele analysis -----")
         # hf.analyze_allele_frequency_count(input_dir,SampleList)
         print("---- Sample statistics csv (also do allele analysis) -----")
-        hf.generate_csv(input_dir,SampleList)
+        hf.generate_csv(input_dir,SampleList,cfg_type=cfg_type)
         print("---- Plot sample statistics -----")
         hf.plot_data_statistics_across_samples(input_dir)
         

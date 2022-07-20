@@ -166,7 +166,7 @@ def set_rcParams(fontsize=12, color_map=None, frameon=None):
 
 
 def generate_csv(
-    data_path: str, SampleList: list, no_merge_list: list = None, plot=True
+    data_path: str, SampleList: list, no_merge_list: list = None, plot=True, cfg_type='Bulk'
 ):
     """
     data_path: should be at the level of samples, e.g., path/to/results_read_cutoff_3
@@ -175,55 +175,111 @@ def generate_csv(
     to be included in the csv file, but not when generating the merge_all statistics and relevant files.
     """
 
-    selected_fields = [
-        "in_fastq:",
-        "eventful_UMIs_total:",
-        "UMI_chosen:",
-        "eventful:",
-        "called:",
-        "Mean reads per edited UMI:",
-        "Mean reads per unedited UMI:",
-        "% UMIs edited:",
-        "Total (including template):",
-        "Singletons (including template):",
-        "Effective Alleles:",
-        "Diversity Index (normalized by all):",
-        "Diversity Index (normalized by edited):",
-        "Mean CARLIN potential (by UMI):",
-        "Mean CARLIN potential (by allele):",
-        "valid_5_primer",
-        "valid_3_primer",
-        "valid_2_seq",
-        "valid_read_structure",
-        "valid_lines",
-        "common_UMIs",
-        "called_UMIs_total",
-    ]
+    if cfg_type.startswith('Bulk'):
+        print('------use Bulk----------')
+        selected_fields = [
+            "in_fastq:",
+            "eventful_UMIs_total:",
+            "UMI_chosen:",
+            "eventful:",
+            "called:",
+            "Mean reads per edited UMI:",
+            "Mean reads per unedited UMI:",
+            "% UMIs edited:",
+            "Total (including template):",
+            "Singletons (including template):",
+            "Effective Alleles:",
+            "Diversity Index (normalized by all):",
+            "Diversity Index (normalized by edited):",
+            "Mean CARLIN potential (by UMI):",
+            "Mean CARLIN potential (by allele):",
+            "valid_5_primer",
+            "valid_3_primer",
+            "valid_2_seq",
+            "valid_read_structure",
+            "valid_lines",
+            "common_UMIs",
+            "called_UMIs_total",
+        ]
 
-    annotation = [
-        "tot_fastq_N",
-        "edit_read_fraction",
-        "read_threshold",
-        "UMI_eventful",
-        "UMI_called",
-        "Mean_read_per_edited_UMI",
-        "Mean_read_per_unedited_UMI",
-        "edit_UMI_fraction",
-        "total_alleles",
-        "singleton",
-        "effective_allele_N",
-        "Diversity_index_all",
-        "Diversity_index_edited",
-        "CARLIN_potential_by_UMI",
-        "CARLIN_potential_by_allel",
-        "valid_5_primer (read_frac)",
-        "valid_3_primer (read_frac)",
-        "valid_2_seq (read_frac)",
-        "valid_read_structure (read_frac)",
-        "valid_lines (read_frac)",
-        "common_UMIs (read_frac)",
-        "called_UMIs_total (read_frac)",
-    ]
+        annotation = [
+            "tot_fastq_N",
+            "edit_read_fraction",
+            "read_threshold",
+            "eventful",
+            "called",
+            "Mean_read_per_edited_tag",
+            "Mean_read_per_unedited_tag",
+            "edit_tag_fraction",
+            "total_alleles",
+            "singleton",
+            "effective_allele_N",
+            "Diversity_index_all",
+            "Diversity_index_edited",
+            "CARLIN_potential_by_tag",
+            "CARLIN_potential_by_allel",
+            "valid_5_primer (read_frac)",
+            "valid_3_primer (read_frac)",
+            "valid_2_seq (read_frac)",
+            "valid_read_structure (read_frac)",
+            "valid_lines (read_frac)",
+            "common_tags (read_frac)",
+            "called_tags_total (read_frac)",
+        ]
+    elif cfg_type.startswith('sc'):
+        print('------use single-cell----------')
+        selected_fields = [
+            "in_fastq:",
+            "eventful_CBs_total:",
+            "UMI_chosen:",
+            "eventful:",
+            "called:",
+            "Mean reads per edited CB:",
+            "Mean reads per unedited CB:",
+            "% CBs edited:",
+            "Total (including template):",
+            "Singletons (including template):",
+            "Effective Alleles:",
+            "Diversity Index (normalized by all):",
+            "Diversity Index (normalized by edited):",
+            "Mean CARLIN potential (by UMI):",
+            "Mean CARLIN potential (by allele):",
+            "valid_5_primer",
+            "valid_3_primer",
+            "valid_2_seq",
+            "valid_read_structure",
+            "valid_lines",
+            "common_CBs",
+            "called_CBs_total",
+        ]
+
+        annotation = [
+            "tot_fastq_N",
+            "edit_read_fraction",
+            "read_threshold",
+            "eventful",
+            "called",
+            "Mean_read_per_edited_tag",
+            "Mean_read_per_unedited_tag",
+            "edit_tag_fraction",
+            "total_alleles",
+            "singleton",
+            "effective_allele_N",
+            "Diversity_index_all",
+            "Diversity_index_edited",
+            "CARLIN_potential_by_tag",
+            "CARLIN_potential_by_allel",
+            "valid_5_primer (read_frac)",
+            "valid_3_primer (read_frac)",
+            "valid_2_seq (read_frac)",
+            "valid_read_structure (read_frac)",
+            "valid_lines (read_frac)",
+            "common_tags (read_frac)",
+            "called_tags_total (read_frac)",
+        ]
+    else:
+        raise ValueError('Should start with Bulk or sc')
+        
     df_list = []
     for sample in SampleList:
         pooled_data = loadmat(f"{data_path}/{sample}/indel_freq_vs_length.mat")
@@ -302,15 +358,15 @@ def compute_merge_all_statistics(
         my_dict[x] = [np.nan]
     annotation_extensive = [
         "tot_fastq_N",
-        "UMI_eventful",
-        "UMI_called",
+        "eventful",
+        "called",
     ]
     annotation_intensive = [
         "edit_read_fraction",
         "read_threshold",
-        "Mean_read_per_edited_UMI",
-        "Mean_read_per_unedited_UMI",
-        "edit_UMI_fraction",
+        "Mean_read_per_edited_tag",
+        "Mean_read_per_unedited_tag",
+        "edit_tag_fraction",
     ]
     for j, x in enumerate(annotation_extensive):
         my_dict[x] = [df_sample_csv[x].sum()]
@@ -328,10 +384,10 @@ def compute_merge_all_statistics(
         df_all[df_all.allele != "[]"]["UMI_count"]
     )
     my_dict["Diversity_index_all"] = (
-        my_dict["effective_allele_N"] / my_dict["UMI_called"]
+        my_dict["effective_allele_N"] / my_dict["called"]
     )
     my_dict["Diversity_index_edited"] = (
-        my_dict["effective_allele_N"] / my_dict["UMI_eventful"]
+        my_dict["effective_allele_N"] / my_dict["eventful"]
     )
 
     df_temp = pd.DataFrame(my_dict)
@@ -459,24 +515,24 @@ def plot_data_statistics_across_samples(data_path):
         df_list = [df]
 
         x_var_list = [
-            "UMI_eventful",
-            "CARLIN_potential_by_UMI",
-            "edit_UMI_fraction",
+            "eventful",
+            "CARLIN_potential_by_tag",
+            "edit_tag_fraction",
             "total_alleles",
         ]
         annotation = [""]
         # title='Read threshold=3'
 
         selected_variables = [
-            "UMI_eventful",
-            "edit_UMI_fraction",
-            "UMI_called",
+            "eventful",
+            "edit_tag_fraction",
+            "called",
             "total_alleles",
             "singleton",
             "effective_allele_N",
             "Diversity_index_all",
             "Diversity_index_edited",
-            "CARLIN_potential_by_UMI",
+            "CARLIN_potential_by_tag",
             "CARLIN_potential_by_allel",
             "ins_del_ratio_ratio_by_eventful_UMI",
             "ave_insert_len",

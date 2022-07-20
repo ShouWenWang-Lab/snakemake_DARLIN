@@ -12,7 +12,8 @@ config['data_dir']=str(os.getcwd())
 ################## 
 
 config['CARLIN_dir']=hf.update_CARLIN_dir(config['CARLIN_dir'],config['template'])
-
+cfg_type=config['cfg_type']
+script_dir=config['script_dir']
 
 if config['template'] == 'Tigre':
     print("------------Warn: remember that the Tigre template is inversed-------------")
@@ -24,7 +25,13 @@ else:
     SampleList=config['SampleList']
 
     
-CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_override']]
+# this is to make the pipeline compatible with earlier bulk config files
+if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.keys()) and ('read_cutoff_override' in config.keys()):
+    config['read_cutoff_UMI_override']=config['read_cutoff_override']
+    config['read_cutoff_CB_override']=10 
+    
+CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
+
     
 
 # remove the flag file of the workflow if the sbatch is not actually run to finish
@@ -47,26 +54,33 @@ rule CARLIN:
     output:
         touch("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done")
     run:
-        # part 1: run pear
-        script_dir=config['script_dir']
-        out_dir=f"pear_output"
-        os.makedirs(out_dir,exist_ok=True)
-        command_1=f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear"
-        command_2=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
-        command_3=f"sh {script_dir}/run_fastqc.sh pear_output/{wildcards.sample}.trimmed.pear.assembled.fastq  fastqc_after_pear"
-        command_4=f"sh {script_dir}/run_multiqc.sh fastqc_before_pear; sh {script_dir}/run_multiqc.sh fastqc_after_pear"
-        
-        
+        if cfg_type.startswith('Bulk'):
+            # part 1: run pear
+            out_dir=f"pear_output"
+            os.makedirs(out_dir,exist_ok=True)
+            command_1=f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear"
+            command_2=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
+            command_3=f"sh {script_dir}/run_fastqc.sh pear_output/{wildcards.sample}.trimmed.pear.assembled.fastq  fastqc_after_pear"
+            #command_4=f"sh {script_dir}/run_multiqc.sh fastqc_before_pear; sh {script_dir}/run_multiqc.sh fastqc_after_pear"
+
+            input_dir=config['data_dir']+'/pear_output'
+        elif cfg_type=='scLimeCat':
+            input_dir=config['data_dir']+'/raw_fastq'
+            command_1=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
+            command_2="echo command_2"
+            command_3="echo command_3"
+            #command_4="echo command_2"
+            
+            
+        print(input_dir)
         CARLIN_dir=config['CARLIN_dir']
-        input_dir=config['data_dir']+'/pear_output'
-        cfg_type=config['cfg_type']
         template=config['template']
-        read_cutoff_floor=config['read_cutoff_floor']
+        read_cutoff_CB_override=config['read_cutoff_CB_override']
         CARLIN_memory_factor=config['CARLIN_memory_factor']
         sbatch=config['sbatch']
         CARLIN_max_run_time=config['CARLIN_max_run_time']
         output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
-        read_cutoff_override=int(wildcards.sub_dir.split('_')[-1])
+        read_cutoff_UMI_override=int(wildcards.sub_dir.split('_')[-1])
         
         file_size = os.path.getsize(f'{input.fq_R1}')*5/1000000000
         print(f"{wildcards.sample}:   FileSize {file_size} G")
@@ -79,9 +93,9 @@ rule CARLIN:
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
         # do not run sbatch within this command
-        command_5=f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {0} {CARLIN_max_run_time}"
+        command_4=f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_UMI_override} {read_cutoff_CB_override} {requested_memory} {0} {CARLIN_max_run_time}"
 
-        combined_command=f"{command_1}; {command_2}; {command_3}; {command_4}; {command_5}"
+        combined_command=f"{command_1}; {command_2}; {command_3}; {command_4}"
         
         
         job_name=f'Car_{wildcards.sample}'

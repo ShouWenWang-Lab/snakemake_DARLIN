@@ -6,8 +6,8 @@ output_dir=$3
 sample=$4
 cfg_type=$5
 template=$6
-read_cutoff_override=$7
-read_cutoff_floor=$8
+read_cutoff_UMI_override=$7
+read_cutoff_CB_override=$8
 requested_memory=$9
 sbatch_job=${10}
 max_run_time=${11}
@@ -19,8 +19,8 @@ max_run_time=${11}
 # sample='test_Tigre_Carlin'
 # cfg_type='BulkDNA_Tigre'
 # template='Tigre'
-# read_cutoff_override=3
-# read_cutoff_floor=8
+# read_cutoff_CB_override=3
+# read_cutoff_UMI_override=8
 # requested_memory=1024 # the unit here is M. By default, we request 1G
 # sbatch_job=1 # 1 to run sbatch, 0 for not
 # max_run_time=1
@@ -34,7 +34,7 @@ mkdir -p log
 if [[ $sbatch_job -eq 0 ]]
 then
     echo "Running interactive mode for CARLIN analysis"
-command_str="my_CARLIN_pipeline('$sample','$cfg_type','$input_dir','$output_dir','$template','read_cutoff_override',$read_cutoff_override,'read_cutoff_floor',$read_cutoff_floor,'CARLIN_dir','$CARLIN_dir')"
+command_str="my_CARLIN_pipeline('$sample','$cfg_type','$input_dir','$output_dir','$template','read_cutoff_UMI_override',$read_cutoff_UMI_override,'read_cutoff_CB_override',$read_cutoff_CB_override,'CARLIN_dir','$CARLIN_dir')"
     #echo $command_str
     cur_dir=$(pwd)
     cd $CARLIN_dir
@@ -42,6 +42,6 @@ command_str="my_CARLIN_pipeline('$sample','$cfg_type','$input_dir','$output_dir'
     cd $cur_dir
 else
     echo "Running batch jobs for CARLIN analysis"
-    sbatch -p short -c 6 -t $max_run_time:00:00 --mem=${requested_memory}G --job-name $sample --output=log/${sample}-%j.o  --error=log/${sample}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="cd ${CARLIN_dir}; matlab -batch \"my_CARLIN_pipeline(\\\"${sample}\\\", \\\"${cfg_type}\\\", \\\"${input_dir}\\\", \\\"${output_dir}\\\", \\\"${template}\\\", \\\"read_cutoff_override\\\", $read_cutoff_override, \\\"read_cutoff_floor\\\", $read_cutoff_floor, \\\"CARLIN_dir\\\", \\\"${CARLIN_dir}\\\")\""
+    sbatch -p short -c 6 -t $max_run_time:00:00 --mem=${requested_memory}G --job-name $sample --output=log/${sample}-%j.o  --error=log/${sample}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="cd ${CARLIN_dir}; matlab -batch \"my_CARLIN_pipeline(\\\"${sample}\\\", \\\"${cfg_type}\\\", \\\"${input_dir}\\\", \\\"${output_dir}\\\", \\\"${template}\\\", \\\"read_cutoff_CB_override\\\", $read_cutoff_CB_override, \\\"read_cutoff_UMI_override\\\", $read_cutoff_UMI_override, \\\"CARLIN_dir\\\", \\\"${CARLIN_dir}\\\")\""
     
 fi
