@@ -725,9 +725,10 @@ def plot_cumulative_insert_del_freq(df_input, save_dir):
         {"Deletion": tot_deletion_per_allele, "Insertion": tot_insertion_per_allele}
     ).melt()
     fig, ax = plt.subplots(figsize=(4, 3))
-    ax = sns.violinplot(
-        data=df, x="variable", y="value", palette=["#d7301f", "#225ea8"]
-    )
+    if len(df)>1:
+        ax = sns.violinplot(
+            data=df, x="variable", y="value", palette=["#d7301f", "#225ea8"]
+        )
     ax.set_ylabel("Cumulative edits per allele (bp)")
     ax.set_xlabel("")
     plt.tight_layout()

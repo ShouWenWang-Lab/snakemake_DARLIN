@@ -99,7 +99,7 @@ rule generate_report:
         Samples=','.join(SampleList)
         data_dir=os.path.join(config['data_dir'],'CARLIN', wildcards.sub_dir)
         shell(f"papermill  {script_dir}/CARLIN_report.ipynb  {data_dir}/merge_all/CARLIN_report.ipynb  -p data_dir {data_dir} -p Samples {Samples}")
-        shell("jupyter nbconvert --to html {data_dir}/merge_all/CARLIN_report.ipynb")
+        shell(f"jupyter nbconvert --to html {data_dir}/merge_all/CARLIN_report.ipynb")
         
         
         

@@ -54,23 +54,36 @@ rule CARLIN:
     output:
         touch("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done")
     run:
+        output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
+        
         if cfg_type.startswith('Bulk'):
-            # part 1: run pear
-            out_dir=f"pear_output"
-            os.makedirs(out_dir,exist_ok=True)
-            command_1=f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear"
-            command_2=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
-            command_3=f"sh {script_dir}/run_fastqc.sh pear_output/{wildcards.sample}.trimmed.pear.assembled.fastq  fastqc_after_pear"
-            #command_4=f"sh {script_dir}/run_multiqc.sh fastqc_before_pear; sh {script_dir}/run_multiqc.sh fastqc_after_pear"
-
             input_dir=config['data_dir']+'/pear_output'
-        elif cfg_type=='scLimeCat':
-            input_dir=config['data_dir']+'/raw_fastq'
-            command_1=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
-            command_2="echo command_2"
-            command_3="echo command_3"
-            #command_4="echo command_2"
+            if (not os.path.exists(f'{output_dir}/{wildcards.sample}/Summary.mat')):
+                # part 1: run pear
+                out_dir=f"pear_output"
+                os.makedirs(out_dir,exist_ok=True)
+                command_1=f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear"
+                command_2=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
+                command_3=f"sh {script_dir}/run_fastqc.sh pear_output/{wildcards.sample}.trimmed.pear.assembled.fastq  fastqc_after_pear"
+                #command_4=f"sh {script_dir}/run_multiqc.sh fastqc_before_pear; sh {script_dir}/run_multiqc.sh fastqc_after_pear"
+            else:
+                command_1="echo command_1"
+                command_2="echo command_2"
+                command_3="echo command_3"
+                
             
+        elif (cfg_type=='scLimeCat'):
+            input_dir=config['data_dir']+'/raw_fastq'
+            if (not os.path.exists(f'{output_dir}/{wildcards.sample}/Summary.mat')):
+                command_1=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
+                command_2="echo command_2"
+                command_3="echo command_3"
+                #command_4="echo command_2"
+            else:
+                command_1="echo command_1"
+                command_2="echo command_2"
+                command_3="echo command_3"
+
             
         print(input_dir)
         CARLIN_dir=config['CARLIN_dir']
@@ -79,7 +92,6 @@ rule CARLIN:
         CARLIN_memory_factor=config['CARLIN_memory_factor']
         sbatch=config['sbatch']
         CARLIN_max_run_time=config['CARLIN_max_run_time']
-        output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         read_cutoff_UMI_override=int(wildcards.sub_dir.split('_')[-1])
         
         file_size = os.path.getsize(f'{input.fq_R1}')*5/1000000000
