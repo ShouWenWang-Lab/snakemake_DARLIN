@@ -72,7 +72,7 @@ rule CARLIN:
                 command_3="echo command_3"
                 
             
-        elif (cfg_type=='scLimeCat'):
+        elif cfg_type.startswith('sc'):
             input_dir=config['data_dir']+'/raw_fastq'
             if (not os.path.exists(f'{output_dir}/{wildcards.sample}/Summary.mat')):
                 command_1=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"

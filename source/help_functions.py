@@ -9,7 +9,7 @@ from matplotlib import cbook, cm, colors
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
 from scipy.io import loadmat
-
+from tqdm import tqdm
 
 def update_CARLIN_dir(CARLIN_root_folder, template):
     if template == "cCARLIN":
@@ -747,3 +747,42 @@ def run_sbatch(command,sbatch_mode='short',mem='10G',cores=2,time='01:0:0',job_n
     sbatch_command = f'sbatch -p {sbatch_mode} -c {cores} -t {time} --mem={mem} --job-name {job_name} --output=log/{job_name}-%j.o  --error=log/{job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="{command}"'
     print(f"submit job:   {sbatch_command}")
     os.system(sbatch_command)
+    
+    
+def merge_fastq(data_path_1, data_path_2, data_path_out, SampleList):
+    """
+    Merge fastq files from different sequencing run
+    ```python
+    import yaml
+    import os
+    root_dir_1='/n/groups/klein/shouwen/lili_project/DATA/CARLIN/20220717_SC_3A'
+    with open(f"{root_dir_1}/config.yaml", "r") as stream:
+        file = yaml.safe_load(stream)
+        SampleList_1 = file["SampleList"]
+
+    root_dir_2='/n/groups/klein/shouwen/lili_project/DATA/CARLIN/20220717_SC_3A_2'
+    with open(f"{root_dir_2}/config.yaml", "r") as stream:
+        file = yaml.safe_load(stream)
+        SampleList_2 = file["SampleList"]
+
+    SampleList= list(set(SampleList_1 + SampleList_2))
+    SampleList_new=sorted(list(set([x.split('_S')[0] for x in SampleList])))
+    ```
+    """
+
+    for sample in tqdm(SampleList):
+        for source in ["R1", "R2"]:
+            file_1 = f"{data_path_1}/{sample}_L001_{source}_001.fastq.gz"
+            file_2 = f"{data_path_2}/{sample}_L001_{source}_001.fastq.gz"
+            file_3 = f"{data_path_out}/{sample}_L001_{source}_001.fastq.gz"
+            if os.path.exists(file_1) & os.path.exists(file_2):
+                print(f"merge {sample}")
+                os.system(f"cat {file_1} {file_2}   > {file_3}")
+            elif os.path.exists(file_1) and (not os.path.exists(file_2)):
+                print(f"{sample} not exist in data_path_2. Direct copy")
+                os.system(f"cp {file_1} {file_3}")
+            elif os.path.exists(file_2) and (not os.path.exists(file_1)):
+                print(f"{sample} not exist in data_path_1. Direct copy")
+                os.system(f"cp {file_2} {file_3}")
+            else:
+                print(f"{sample} not exist in either data_path_1 or data_path_2")

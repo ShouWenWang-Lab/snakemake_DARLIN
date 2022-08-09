@@ -15,9 +15,6 @@ config['CARLIN_dir']=hf.update_CARLIN_dir(config['CARLIN_dir'],config['template'
 cfg_type=config['cfg_type']
 script_dir=config['script_dir']
 
-if config['template'] == 'Tigre':
-    print("------------Warn: remember that the Tigre template is inversed-------------")
-
 if len(config['SampleList'])==0: 
     df=pd.read_csv('raw_fastq/sample_info.csv')
     SampleList=list(df['Sample_long'])
@@ -30,7 +27,14 @@ if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.key
     config['read_cutoff_UMI_override']=config['read_cutoff_override']
     config['read_cutoff_CB_override']=10 
     
-CARLIN_sub_dir=[f"Shouwen_Method"]
+    
+# parameters
+coarse_grained_readcutoff_floor=config['single_cell_pipeline']['coarse_grained_readcutoff_floor']
+distance_relative_threshold=config['single_cell_pipeline']['distance_relative_threshold']
+read_ratio_threshold=config['single_cell_pipeline']['read_ratio_threshold']
+seq_3prime_upper_N=config['single_cell_pipeline']['seq_3prime_upper_N']
+output_folder=config['single_cell_pipeline']['output_folder']
+CARLIN_sub_dir=[output_folder]
 
     
 # remove the flag file of the workflow if the sbatch is not actually run to finish
@@ -55,8 +59,8 @@ rule CARLIN:
     run:
         output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         
-        if (cfg_type!='scLimeCat'):
-            raise ValueError("This pipeline is only intended for scLimeCat")
+        if (cfg_type not in ['scLimeCat','sc10xV3']):
+            raise ValueError("This pipeline is only intended for scLimeCat or sc10xV3")
             
         else:
             input_dir=config['data_dir']+'/raw_fastq'
@@ -79,10 +83,18 @@ rule CARLIN:
         
         print("----generate report -----")
         data_dir=config['data_dir']
-        command=f"""
-        papermill  {script_dir}/single_cell_CARLIN.ipynb  {output_dir}/{wildcards.sample}/single_cell_CARLIN.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p output_dir {output_dir}/{wildcards.sample}
-        jupyter nbconvert --to html {output_dir}/{wildcards.sample}/single_cell_CARLIN.ipynb
-        """
+        
+        if cfg_type=='scLimeCat':
+            command=f"""
+            papermill  {script_dir}/single_cell_CARLIN-Lime.ipynb  {output_dir}/{wildcards.sample}/single_cell_CARLIN-Lime.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p coarse_grained_readcutoff_floor {coarse_grained_readcutoff_floor} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
+            jupyter nbconvert --to html {output_dir}/{wildcards.sample}/single_cell_CARLIN-Lime.ipynb
+            """
+        elif cfg_type=='sc10xV3':
+            command=f"""
+            papermill  {script_dir}/single_cell_CARLIN-10x.ipynb  {output_dir}/{wildcards.sample}/single_cell_CARLIN-10x.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p coarse_grained_readcutoff_floor {coarse_grained_readcutoff_floor} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
+            jupyter nbconvert --to html {output_dir}/{wildcards.sample}/single_cell_CARLIN-10x.ipynb
+            """
+            
         
         job_name=f'scL_{wildcards.sample}'
         if config['sbatch']==0:
