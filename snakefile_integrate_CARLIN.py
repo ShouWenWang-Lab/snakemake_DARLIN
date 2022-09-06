@@ -28,7 +28,6 @@ else:
 # this is to make the pipeline compatible with earlier bulk config files
 if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.keys()) and ('read_cutoff_override' in config.keys()):
     config['read_cutoff_UMI_override']=config['read_cutoff_override']
-    config['read_cutoff_CB_override']=10 
     
 CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
 
@@ -88,11 +87,12 @@ rule CARLIN:
         print(input_dir)
         CARLIN_dir=config['CARLIN_dir']
         template=config['template']
-        read_cutoff_CB_override=config['read_cutoff_CB_override']
+        
         CARLIN_memory_factor=config['CARLIN_memory_factor']
         sbatch=config['sbatch']
         CARLIN_max_run_time=config['CARLIN_max_run_time']
         read_cutoff_UMI_override=int(wildcards.sub_dir.split('_')[-1])
+        read_cutoff_CB_override=read_cutoff_UMI_override
         
         file_size = os.path.getsize(f'{input.fq_R1}')*5/1000000000
         print(f"{wildcards.sample}:   FileSize {file_size} G")

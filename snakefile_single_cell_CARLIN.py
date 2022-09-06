@@ -102,4 +102,4 @@ rule CARLIN:
             os.system(command)
         else:
             print("Run on sbatch")
-            os.system(f"python {script_dir}/run_sbatch.py --job_name {job_name} --cores 1 --mem {requested_memory}G --time {CARLIN_max_run_time} --command '{command}' ") # we use ' in '{command}' to avoid bash expansion
+            os.system(f"python {script_dir}/run_sbatch.py --job_name {job_name} --cores 1 --mem {requested_memory}G --time 1 --command '{command}' ") # we use ' in '{command}' to avoid bash expansion
