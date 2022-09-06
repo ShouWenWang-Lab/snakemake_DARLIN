@@ -11,6 +11,7 @@ from matplotlib import rcParams
 from scipy.io import loadmat
 from tqdm import tqdm
 
+
 def update_CARLIN_dir(CARLIN_root_folder, template):
     if template == "cCARLIN":
         os.system(
@@ -166,7 +167,11 @@ def set_rcParams(fontsize=12, color_map=None, frameon=None):
 
 
 def generate_csv(
-    data_path: str, SampleList: list, no_merge_list: list = None, plot=True, cfg_type='Bulk'
+    data_path: str,
+    SampleList: list,
+    no_merge_list: list = None,
+    plot=True,
+    cfg_type="Bulk",
 ):
     """
     data_path: should be at the level of samples, e.g., path/to/results_read_cutoff_3
@@ -175,8 +180,8 @@ def generate_csv(
     to be included in the csv file, but not when generating the merge_all statistics and relevant files.
     """
 
-    if cfg_type.startswith('Bulk'):
-        print('------use Bulk----------')
+    if cfg_type.startswith("Bulk"):
+        print("------use Bulk----------")
         selected_fields = [
             "in_fastq:",
             "eventful_UMIs_total:",
@@ -226,8 +231,8 @@ def generate_csv(
             "common_tags (read_frac)",
             "called_tags_total (read_frac)",
         ]
-    elif cfg_type.startswith('sc'):
-        print('------use single-cell----------')
+    elif cfg_type.startswith("sc"):
+        print("------use single-cell----------")
         selected_fields = [
             "in_fastq:",
             "eventful_CBs_total:",
@@ -278,18 +283,11 @@ def generate_csv(
             "called_tags_total (read_frac)",
         ]
     else:
-        raise ValueError('Should start with Bulk or sc')
-        
+        raise ValueError("Should start with Bulk or sc")
+
     df_list = []
     for sample in SampleList:
-        pooled_data = loadmat(f"{data_path}/{sample}/indel_freq_vs_length.mat")
-        ins_freq = pooled_data["ins_freq"][0][0].flatten()
-        del_freq = pooled_data["del_freq"][0][0].flatten()
-        size_array = np.arange(len(ins_freq)) + 1
-        ave_ins_length = np.sum(ins_freq * size_array) / np.sum(ins_freq)
-        ave_del_length = np.sum(del_freq * size_array) / np.sum(del_freq)
-        ins_del_ratio_ratio_by_eventful_UMI = np.sum(ins_freq) / np.sum(del_freq)
-
+        ## extract from Results
         filename = f"{data_path}/{sample}/Results.txt"
         with open(filename) as file:
             lines = [line.rstrip() for line in file]
@@ -310,11 +308,25 @@ def generate_csv(
         for j, x in enumerate(annotation):
             my_dict[x] = [value[j]]
 
-        my_dict["ave_insert_len"] = [ave_ins_length]
-        my_dict["ave_del_len"] = [ave_del_length]
-        my_dict["ins_del_ratio_ratio_by_eventful_UMI"] = [
-            ins_del_ratio_ratio_by_eventful_UMI
-        ]
+        ## add indel information
+        if os.path.exists(f"{data_path}/{sample}/indel_freq_vs_length.mat"):
+            pooled_data = loadmat(f"{data_path}/{sample}/indel_freq_vs_length.mat")
+            ins_freq = pooled_data["ins_freq"][0][0].flatten()
+            del_freq = pooled_data["del_freq"][0][0].flatten()
+            size_array = np.arange(len(ins_freq)) + 1
+            ave_ins_length = np.sum(ins_freq * size_array) / np.sum(ins_freq)
+            ave_del_length = np.sum(del_freq * size_array) / np.sum(del_freq)
+            ins_del_ratio_ratio_by_eventful_UMI = np.sum(ins_freq) / np.sum(del_freq)
+
+            my_dict["ave_insert_len"] = [ave_ins_length]
+            my_dict["ave_del_len"] = [ave_del_length]
+            my_dict["ins_del_ratio_ratio_by_eventful_UMI"] = [
+                ins_del_ratio_ratio_by_eventful_UMI
+            ]
+        else:
+            my_dict["ave_insert_len"] = [pd.NA]
+            my_dict["ave_del_len"] = [pd.NA]
+            my_dict["ins_del_ratio_ratio_by_eventful_UMI"] = [pd.NA]
         my_dict["source"] = sample[:2]
         df_temp = pd.DataFrame(my_dict)
         df_list.append(df_temp.set_index("sample"))
@@ -383,9 +395,7 @@ def compute_merge_all_statistics(
     my_dict["effective_allele_N"] = effective_allele_number(
         df_all[df_all.allele != "[]"]["UMI_count"]
     )
-    my_dict["Diversity_index_all"] = (
-        my_dict["effective_allele_N"] / my_dict["called"]
-    )
+    my_dict["Diversity_index_all"] = my_dict["effective_allele_N"] / my_dict["called"]
     my_dict["Diversity_index_edited"] = (
         my_dict["effective_allele_N"] / my_dict["eventful"]
     )
@@ -725,7 +735,7 @@ def plot_cumulative_insert_del_freq(df_input, save_dir):
         {"Deletion": tot_deletion_per_allele, "Insertion": tot_insertion_per_allele}
     ).melt()
     fig, ax = plt.subplots(figsize=(4, 3))
-    if len(df)>1:
+    if len(df) > 1:
         ax = sns.violinplot(
             data=df, x="variable", y="value", palette=["#d7301f", "#225ea8"]
         )
@@ -739,16 +749,18 @@ def plot_cumulative_insert_del_freq(df_input, save_dir):
 def effective_allele_number(UMI_counts):
     x = np.array(UMI_counts) / np.sum(UMI_counts)
     entropy = -np.sum(np.log2(x) * x)
-    return 2 ** entropy
+    return 2**entropy
 
 
-def run_sbatch(command,sbatch_mode='short',mem='10G',cores=2,time='01:0:0',job_name='sbatch'):
+def run_sbatch(
+    command, sbatch_mode="short", mem="10G", cores=2, time="01:0:0", job_name="sbatch"
+):
     os.system("mkdir -p log")
     sbatch_command = f'sbatch -p {sbatch_mode} -c {cores} -t {time} --mem={mem} --job-name {job_name} --output=log/{job_name}-%j.o  --error=log/{job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="{command}"'
     print(f"submit job:   {sbatch_command}")
     os.system(sbatch_command)
-    
-    
+
+
 def merge_fastq(data_path_1, data_path_2, data_path_out, SampleList):
     """
     Merge fastq files from different sequencing run
