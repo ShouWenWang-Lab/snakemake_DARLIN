@@ -585,6 +585,7 @@ def plot_insertion_patterns(data_path: str, SampleList: list):
     allele_annotation = {}
     insertion_annotation = {}
     tot_insertion_list = []
+    result = {}
     for sample in SampleList:
         f = f"{data_path}/{sample}/AlleleAnnotations.txt"
         with open(f, "r", encoding="utf-8") as infile:
@@ -605,7 +606,7 @@ def plot_insertion_patterns(data_path: str, SampleList: list):
             x_label = ["A", "T", "C", "G"]
             count = [np.sum(np.array(insertion_list) == x) for x in x_label]
             axs[0].bar([0, 1, 2, 3], count, tick_label=x_label)
-            axs[0].yaxis.set_major_formatter(mtick.FormatStrFormatter("%.1e"))
+            # axs[0].yaxis.set_major_formatter(mtick.FormatStrFormatter("%.1e"))
             axs[0].set_ylabel("Count")
             axs[0].set_title(sample)
 
@@ -615,15 +616,17 @@ def plot_insertion_patterns(data_path: str, SampleList: list):
                 tick_label=["A+T", "C+G"],
             )
             axs[1].set_ylabel("Count")
-            axs[1].yaxis.set_major_formatter(mtick.FormatStrFormatter("%.1e"))
+            # axs[1].yaxis.set_major_formatter(mtick.FormatStrFormatter("%.1e"))
             plt.tight_layout()
             plt.savefig(f"{data_path}/{sample}/insertion_pattern.png")
+            result[sample] = count
 
     f, axs = plt.subplots(1, 2, figsize=(8, 4), gridspec_kw=dict(width_ratios=[4, 3]))
     x_label = ["A", "T", "C", "G"]
     count = [np.sum(np.array(tot_insertion_list) == x) for x in x_label]
+    result["All"] = count
     axs[0].bar([0, 1, 2, 3], count, tick_label=x_label)
-    axs[0].yaxis.set_major_formatter(mtick.FormatStrFormatter("%.1e"))
+    # axs[0].yaxis.set_major_formatter(mtick.FormatStrFormatter("%.1e"))
     axs[0].set_ylabel("Count")
     axs[0].set_title("All samples")
 
@@ -631,11 +634,12 @@ def plot_insertion_patterns(data_path: str, SampleList: list):
         [0, 1], [count[0] + count[1], count[2] + count[3]], tick_label=["A+T", "C+G"]
     )
     axs[1].set_ylabel("Count")
-    axs[1].yaxis.set_major_formatter(mtick.FormatStrFormatter("%.1e"))
+    # axs[1].yaxis.set_major_formatter(mtick.FormatStrFormatter("%.1e"))
     plt.tight_layout()
 
     os.makedirs(f"{data_path}/merge_all", exist_ok=True)
     plt.savefig(f"{data_path}/merge_all/all_insertion_pattern.png")
+    return pd.DataFrame(result, index=x_label)
 
 
 def plot_cumulative_insert_del_freq(df_input, save_dir):
