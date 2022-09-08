@@ -1,8 +1,11 @@
-import pandas as pd
-from pathlib import Path
 import os
 import sys
+from pathlib import Path
+
+import pandas as pd
+
 from source import help_functions as hf
+
 #configfile: "config.yaml"  # command line way to set it: --configfile 'path/to/config'
 #workdir: config['data_dir'] # set working directory, a command-line way to set it: --directory 'path/to/your/dir'
 config['data_dir']=str(os.getcwd())
@@ -54,7 +57,6 @@ rule CARLIN:
         input_dir=config['data_dir']+'/pear_output'
         cfg_type=config['cfg_type']
         template=config['template']
-        read_cutoff_floor=config['read_cutoff_floor']
         CARLIN_memory_factor=config['CARLIN_memory_factor']
         sbatch=config['sbatch']
         CARLIN_max_run_time=config['CARLIN_max_run_time']
@@ -71,5 +73,18 @@ rule CARLIN:
         print(f"{wildcards.sample}:   Requested memory {requested_memory} G")
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
-        shell(f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {sbatch} {CARLIN_max_run_time}")
 
+        command=f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_override} {requested_memory} {0} {CARLIN_max_run_time}"
+
+        
+        job_name=f'Car_{wildcards.sample}'
+        if config['sbatch']==0:
+            print("Run on terminal directly")
+            os.system(command)
+        else:
+            print("Run on sbatch")
+            if CARLIN_max_run_time>12:
+                sbatch_mode='medium'
+            else:
+                sbatch_mode='short'
+            os.system(f"python {script_dir}/run_sbatch.py  --sbatch_mode {sbatch_mode} --job_name {job_name} --cores 1 --mem {requested_memory}G --time {CARLIN_max_run_time} --command '{command}' ") # we use ' in '{command}' to avoid bash expansion

@@ -1,8 +1,11 @@
-import pandas as pd
-from pathlib import Path
 import os
 import sys
+from pathlib import Path
+
+import pandas as pd
+
 from source import help_functions as hf
+
 #configfile: "config.yaml"  # command line way to set it: --configfile 'path/to/config'
 #workdir: config['data_dir'] # set working directory, a command-line way to set it: --directory 'path/to/your/dir'
 config['data_dir']=str(os.getcwd())
@@ -116,4 +119,8 @@ rule CARLIN:
             os.system(combined_command)
         else:
             print("Run on sbatch")
-            os.system(f"python {script_dir}/run_sbatch.py --job_name {job_name} --cores 1 --mem {requested_memory}G --time {CARLIN_max_run_time} --command '{combined_command}' ") # we use ' in '{command}' to avoid bash expansion
+            if CARLIN_max_run_time>12:
+                sbatch_mode='medium'
+            else:
+                sbatch_mode='short'
+            os.system(f"python {script_dir}/run_sbatch.py  --sbatch_mode {sbatch_mode}  --job_name {job_name} --cores 1 --mem {requested_memory}G --time {CARLIN_max_run_time} --command '{combined_command}' ") # we use ' in '{command}' to avoid bash expansion
