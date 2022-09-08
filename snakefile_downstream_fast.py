@@ -78,6 +78,7 @@ rule plots:
             data = loadmat(f"{input_dir}/{sample}/allele_annotation.mat")
             freq = data["allele_freqs"].flatten()[1:]
             allele_annot = data["AlleleAnnotation"].flatten()[1:]
+            allele_annot=[x[0] for x in allele_annot]
             df_input=pd.DataFrame({'allele':allele_annot,'UMI_count':freq})
             df_input.to_csv(f"{input_dir}/{sample}/allele_UMI_count.csv",index=0)
             hf.plot_cumulative_insert_del_freq(df_input, input_dir+'/'+sample)

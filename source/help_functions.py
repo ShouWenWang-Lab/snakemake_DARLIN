@@ -644,8 +644,8 @@ def plot_insertion_patterns(data_path: str, SampleList: list):
 
 def plot_cumulative_insert_del_freq(df_input, save_dir):
 
-    freq = df_input["UMI_count"].to_numpy()
-    allele_annot = df_input["allele"]
+    freq = df_input["UMI_count"].to_numpy().astype(int)
+    allele_annot = df_input["allele"].to_list()
     del_length_all = []
     ins_length_all = []
     substitute_all = []
@@ -653,7 +653,7 @@ def plot_cumulative_insert_del_freq(df_input, save_dir):
     tot_deletion_per_allele = []
     ins_seqs_all = ""
     for i, x in enumerate(allele_annot):
-        vector_x = x[0].split(",")
+        vector_x = x.split(",")
         temp_del = []
         temp_ins = []
         for y in vector_x:
@@ -708,6 +708,7 @@ def plot_cumulative_insert_del_freq(df_input, save_dir):
         nucleotide_hist.append(np.sum(np.array(list(ins_seqs_all)) == x))
     nucleotide_hist = np.array(nucleotide_hist) / np.sum(nucleotide_hist)
 
+    fig, ax = plt.subplots(figsize=(4, 3))
     ax = sns.barplot(x=[1, 2, 3, 4], y=nucleotide_hist)
     # ticks = [1, 2, 3, 4]
     # labels = ["A", "T", "C", "G"]
