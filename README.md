@@ -102,7 +102,7 @@ The result will show up at the `merge_all` folder as shown in the above image.
 
 
 ### A single-cell pipeline for libraries with higher amplification heterogneity
-We also developed our own CARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. This pipeline is written in jupyter notebook, and it requires to first install a companion repository `carlin_hf`. 
+We also developed our own CARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. This pipeline is written in jupyter notebook (`source/single_cell_CARLIN.ipynb`), and it requires to first install a companion repository `carlin_hf`. 
 ```bash
 cd $code_directory
 git clone git@github.com:ShouWenWangLab/carlin_hf.git
