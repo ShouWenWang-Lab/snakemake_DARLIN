@@ -4,18 +4,13 @@ This is a pipeline written with snakemake to automatically manage the data prepr
 
 This pipeline is especially useful when you have multiple samples from a single sequencing run. All you have to do is to provide the relevant information in a `config.yaml` file.   
 
-This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWangLab/Custom_CARLIN
 
 This is a brief example:
-
 ![image info](https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png)
-
-.. image:: https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png
-   :width: 300px
-   :align: left
 
 As indicated in this example, the `config.yaml` file should be at the root folder, and the fastq data should be at the folder `raw_fastq`
 
+This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWangLab/Custom_CARLIN
 
 ## Clone the code 
 First, go to a directory where you want to store the code
