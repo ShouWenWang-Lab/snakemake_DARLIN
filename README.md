@@ -1,5 +1,56 @@
 # Introduction
 
+This is a pipeline written with snakemake to automatically manage the data preprocessing (e.g., run PEAR to merge R1 and R2), sequence quality control, and run CARLIN pipeline. All you need to provide is the raw fastq file.
+
+This pipeline is especially useful when you have multiple samples from a single sequencing run. All you have to do is to provide the relevant information in a `config.yaml` file.   
+
+This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWangLab/Custom_CARLIN
+
+This is a brief example:
+.. image:: https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png
+   :width: 300px
+   :align: left
+
+As indicated in this example, the `config.yaml` file should be at the root folder, and the fastq data should be at the folder `raw_fastq`
+
+
+## Clone the code 
+First, go to a directory where you want to store the code
+```bash
+code_directory='your/code/directory'
+cd $code_directory
+```
+
+Next, run the following bash commands to clone both the customized CARLIN repository as well as this snakemake respository.
+```bash
+git clone git@github.com:ShouWenWangLab/snakemake_carlin.git
+mkdir CARLIN_pipeline
+cd CARLIN_pipeline
+git clone git@github.com:ShouWenWangLab/Custom_CARLIN.git
+```
+
+
+## Data
+
+### Input data structure
+We assume that the data is generated with Miseq machine from Illumina. Specifically, we assume that the file name starts with a sample_ID, and has both R1 and R2: 
+```python
+fq_R1=f"{sample}_L001_R1_001.fastq.gz"
+fq_R2=f"{sample}_L001_R2_001.fastq.gz"
+```
+If the data are not in this format
+
+
+
+## Grabbing the data
+
+We assume that this data is generated with Miseq machine from Illumina.
+
+
+If the data is generated with Miseq from Illumina, you can 
+
+
+
 In order to run Snakemake pipeline, you can do the following.
 
 1, To grab the new data from basespace, first view sample information
