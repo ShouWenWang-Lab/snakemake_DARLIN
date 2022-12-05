@@ -8,6 +8,8 @@ This pipeline must be used together with a customized version of the CARLIN pipe
 
 This is a brief example:
 
+![image info](https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png)
+
 .. image:: https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png
    :width: 300px
    :align: left
