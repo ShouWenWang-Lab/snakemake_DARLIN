@@ -25,6 +25,22 @@ cd CARLIN_pipeline
 git clone git@github.com:ShouWenWangLab/Custom_CARLIN.git
 ```
 
+Setup the environment
+```bash
+conda install -n base -c conda-forge mamba --yes
+conda activate base
+mamba create -c conda-forge -c bioconda -n snakemake snakemake
+conda activate snakemake
+pip install --user ipykernel
+pip install jupyterlab umi_tools seaborn papermill biopython
+mamba install -c bioconda fastqc multiqc --yes
+python -m ipykernel install --user --name=snakemake
+```
+
+Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/) and `matlab` so that they will be available as commands in terminal. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command
+```bash
+module load matlab/2019a
+```
 
 ## Running the pipeline
 
