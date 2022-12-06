@@ -10,6 +10,7 @@ This is a brief example:
 
 This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWangLab/Custom_CARLIN
 
+
 ## Clone the code 
 First, go to a directory where you want to store the code
 ```bash
@@ -37,7 +38,7 @@ mamba install -c bioconda fastqc multiqc --yes
 python -m ipykernel install --user --name=snakemake
 ```
 
-Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/) and `matlab` so that they will be available as commands in terminal. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command
+Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/) and `matlab` so that they will be available as commands in terminal. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command in this pipeline
 ```bash
 module load matlab/2019a
 ```
