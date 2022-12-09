@@ -12,21 +12,8 @@ This pipeline must be used together with a customized version of the CARLIN pipe
 
 
 ## Clone the code 
-First, go to a directory where you want to store the code
-```bash
-code_directory='your/code/directory'
-cd $code_directory
-```
 
-Next, run the following bash commands to clone both the customized CARLIN repository as well as this snakemake respository.
-```bash
-git clone git@github.com:ShouWenWangLab/snakemake_carlin.git
-mkdir CARLIN_pipeline
-cd CARLIN_pipeline
-git clone git@github.com:ShouWenWangLab/Custom_CARLIN.git
-```
-
-Setup the environment
+Make an environment called `snakemake`
 ```bash
 conda install -n base -c conda-forge mamba --yes
 conda activate base
@@ -38,9 +25,27 @@ mamba install -c bioconda fastqc multiqc --yes
 python -m ipykernel install --user --name=snakemake
 ```
 
+Next, go to a directory where you want to store the code and install all relevant packages
+```bash
+code_directory='your/code/directory'
+cd $code_directory
+git clone git@github.com:ShouWenWangLab/carlin_hf.git
+cd carlin_hf
+pip install -r requirements.txt
+python setup.py develop
+cd ..
+git clone git@github.com:ShouWenWangLab/snakemake_carlin.git
+mkdir CARLIN_pipeline
+cd CARLIN_pipeline
+git clone git@github.com:ShouWenWangLab/Custom_CARLIN.git
+cd ..
+```
+
+
+
 Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/) and `matlab` so that they will be available as commands in terminal. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command in this pipeline
 ```bash
-module load matlab/2019a
+module load matlab
 ```
 
 ## Running the pipeline
