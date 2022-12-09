@@ -5,7 +5,7 @@ input_dir=$2
 SampleList=$3
 template=$4
 
-module load matlab/2019a
+module load matlab
 
 echo "Running interactive mode for merging samples and allele bank generation"
 #command_str="make_allele_bank('$SampleList','$input_dir','$template')"

@@ -6,7 +6,7 @@ SampleList=$3
 template=$4
 
 
-module load matlab/2019a
+module load matlab
 
 echo "Running interactive mode for csv generation"
 command_str="csv_reports('$SampleList','$input_dir','$template')"

@@ -28,7 +28,7 @@ max_run_time=${11}
 #echo sbatch_job=${sbatch_job}
 # file_size_command="$input_dir/$sample.trimmed.pear.assembled.fastq";file_size="$(du $file_size_command)";requested_memory="$($CARLIN_memory_factor*$file_size)"
 
-module load matlab/2019a
+module load matlab
 mkdir -p log
 
 if [[ $sbatch_job -eq 0 ]]
