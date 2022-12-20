@@ -8,7 +8,7 @@ This pipeline is especially useful when you have multiple samples from a single 
 This is a brief example:
 ![image info](https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png)
 
-This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWangLab/Custom_CARLIN
+This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWangLab/Custom_CARLIN, and it is designed to work on SLURM linux server. 
 
 
 ## Clone the code 
@@ -21,7 +21,7 @@ mamba create -c conda-forge -c bioconda -n snakemake snakemake
 conda activate snakemake
 pip install --user ipykernel
 pip install jupyterlab umi_tools seaborn papermill biopython
-mamba install -c bioconda fastqc multiqc --yes
+mamba install -c bioconda fastqc multiqc tree --yes
 python -m ipykernel install --user --name=snakemake
 ```
 
@@ -42,8 +42,7 @@ cd ..
 ```
 
 
-
-Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/) and `matlab` so that they will be available as commands in terminal. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command in this pipeline
+Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/ which provides a pre-compiled version to run on Linux) and `matlab` so that they will be available as commands in terminal. Also make sure that both `fastqc` and `multiqc` are globally accessible. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command in this pipeline
 ```bash
 module load matlab
 ```
