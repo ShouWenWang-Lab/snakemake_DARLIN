@@ -48,7 +48,7 @@ def update_CARLIN_dir(CARLIN_root_folder, template):
         raise ValueError(
             "The input template should be among {Rosa, Tigre_2022, Tigre, cCARLIN, Rosa_v2, Tigre_2022_v2}"
         )
-    return Actual_CARLIN_dir
+    return os.path.abspath(Actual_CARLIN_dir)
 
 
 def training_notification(

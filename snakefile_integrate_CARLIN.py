@@ -15,6 +15,7 @@ config['data_dir']=str(os.getcwd())
 ################## 
 
 config['CARLIN_dir']=hf.update_CARLIN_dir(config['CARLIN_dir'],config['template'])
+print('CARLIN dir:',config['CARLIN_dir'])
 cfg_type=config['cfg_type']
 script_dir=config['script_dir']
 
