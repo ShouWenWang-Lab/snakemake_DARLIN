@@ -29,15 +29,15 @@ Next, go to a directory where you want to store the code and install all relevan
 ```bash
 code_directory='your/code/directory'
 cd $code_directory
-git clone git@github.com:ShouWenWangLab/carlin_hf.git
+git clone https://github.com/ShouWenWang-Lab/carlin_hf
 cd carlin_hf
 pip install -r requirements.txt
 python setup.py develop
 cd ..
-git clone git@github.com:ShouWenWangLab/snakemake_carlin.git
+git clone https://github.com/ShouWenWang-Lab/snakemake_carlin
 mkdir CARLIN_pipeline
 cd CARLIN_pipeline
-git clone git@github.com:ShouWenWangLab/Custom_CARLIN.git
+git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN
 cd ..
 ```
 
