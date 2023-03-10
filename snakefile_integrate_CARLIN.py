@@ -18,6 +18,10 @@ config['CARLIN_dir']=hf.update_CARLIN_dir(config['CARLIN_dir'],config['template'
 print('CARLIN dir:',config['CARLIN_dir'])
 cfg_type=config['cfg_type']
 script_dir=config['script_dir']
+if 'sbatch_mode' in config.keys():
+    sbatch_mode=config['sbatch_mode']
+else:
+    sbatch_mode='intel-sc3'
 
 if config['template'] == 'Tigre':
     print("------------Warn: remember that the Tigre template is inversed-------------")
@@ -120,8 +124,4 @@ rule CARLIN:
             os.system(combined_command)
         else:
             print("Run on sbatch")
-            if CARLIN_max_run_time>12:
-                sbatch_mode='medium'
-            else:
-                sbatch_mode='short'
             os.system(f"python {script_dir}/run_sbatch.py  --sbatch_mode {sbatch_mode}  --job_name {job_name} --cores 1 --mem {requested_memory}G --time {CARLIN_max_run_time} --command '{combined_command}' ") # we use ' in '{command}' to avoid bash expansion
