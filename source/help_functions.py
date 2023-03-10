@@ -758,7 +758,7 @@ def effective_allele_number(UMI_counts):
 
 
 def run_sbatch(
-    command, sbatch_mode="short", mem="10G", cores=2, time="01:0:0", job_name="sbatch"
+    command, sbatch_mode="intel-sc3", mem="10G", cores=2, time="01:0:0", job_name="sbatch"
 ):
     os.system("mkdir -p log")
     sbatch_command = f'sbatch -p {sbatch_mode} -c {cores} -t {time} --mem={mem} --job-name {job_name} --output=log/{job_name}-%j.o  --error=log/{job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="{command}"'
