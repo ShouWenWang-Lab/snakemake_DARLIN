@@ -10,3 +10,4 @@ read_cutoff_floor : 1  # the algorithm takes the max of ....; this variable is n
 CARLIN_memory_factor : 100 # request memory at X times the size of the pear fastq file.
 sbatch : 0 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
 CARLIN_max_run_time : 6 # hours
+sbatch_mode: 'short' # partion name
