@@ -86,12 +86,12 @@ rule CARLIN:
         
         if cfg_type=='scLimeCat':
             command=f"""
-            papermill  {script_dir}/single_cell_CARLIN-Lime.ipynb  {output_dir}/{wildcards.sample}/single_cell_CARLIN-Lime.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p coarse_grained_readcutoff_floor {coarse_grained_readcutoff_floor} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
+            papermill  {script_dir}/single_cell_CARLIN-Lime.ipynb  {output_dir}/{wildcards.sample}/single_cell_CARLIN-Lime.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p {script_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p coarse_grained_readcutoff_floor {coarse_grained_readcutoff_floor} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
             jupyter nbconvert --to html {output_dir}/{wildcards.sample}/single_cell_CARLIN-Lime.ipynb
             """
         elif cfg_type=='sc10xV3':
             command=f"""
-            papermill  {script_dir}/single_cell_CARLIN-10x.ipynb  {output_dir}/{wildcards.sample}/single_cell_CARLIN-10x.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p coarse_grained_readcutoff_floor {coarse_grained_readcutoff_floor} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
+            papermill  {script_dir}/single_cell_CARLIN-10x.ipynb  {output_dir}/{wildcards.sample}/single_cell_CARLIN-10x.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p {script_dir} -p coarse_grained_readcutoff_floor {coarse_grained_readcutoff_floor} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
             jupyter nbconvert --to html {output_dir}/{wildcards.sample}/single_cell_CARLIN-10x.ipynb
             """
             

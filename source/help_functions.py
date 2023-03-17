@@ -758,7 +758,12 @@ def effective_allele_number(UMI_counts):
 
 
 def run_sbatch(
-    command, sbatch_mode="intel-sc3", mem="10G", cores=2, time="01:0:0", job_name="sbatch"
+    command,
+    sbatch_mode="intel-sc3",
+    mem="10G",
+    cores=2,
+    time="01:0:0",
+    job_name="sbatch",
 ):
     os.system("mkdir -p log")
     sbatch_command = f'sbatch -p {sbatch_mode} -c {cores} -t {time} --mem={mem} --job-name {job_name} --output=log/{job_name}-%j.o  --error=log/{job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="{command}"'
@@ -772,12 +777,12 @@ def merge_fastq(data_path_1, data_path_2, data_path_out, SampleList):
     ```python
     import yaml
     import os
-    root_dir_1='/n/groups/klein/shouwen/lili_project/DATA/CARLIN/20220717_SC_3A'
+    root_dir_1='/storage/wangshouwenLab/wangshouwen/DATA/CARLIN/20220717_SC_3A'
     with open(f"{root_dir_1}/config.yaml", "r") as stream:
         file = yaml.safe_load(stream)
         SampleList_1 = file["SampleList"]
 
-    root_dir_2='/n/groups/klein/shouwen/lili_project/DATA/CARLIN/20220717_SC_3A_2'
+    root_dir_2='/storage/wangshouwenLab/wangshouwen/DATA/CARLIN/20220717_SC_3A_2'
     with open(f"{root_dir_2}/config.yaml", "r") as stream:
         file = yaml.safe_load(stream)
         SampleList_2 = file["SampleList"]
