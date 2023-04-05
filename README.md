@@ -8,7 +8,7 @@ This pipeline is especially useful when you have multiple samples from a single 
 This is a brief example:
 ![image info](https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png)
 
-This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWangLab/Custom_CARLIN, and it is designed to work on SLURM linux server. 
+This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWang-Lab/Custom_CARLIN, and it is designed to work on SLURM linux server. 
 
 
 ## Clone the code 
@@ -126,7 +126,7 @@ The result will show up at the `merge_all` folder as shown in the above image.
 We also developed our own CARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. This pipeline is written in jupyter notebook (`source/single_cell_CARLIN.ipynb`), and it requires to first install a companion repository `MosaicLineage`. 
 ```bash
 cd $code_directory
-git clone git@github.com:ShouWenWangLab/MosaicLineage.git
+git clone git@github.com:ShouWenWang-Lab/MosaicLineage.git
 cd MosaicLineage
 python setup.py develop
 ```
