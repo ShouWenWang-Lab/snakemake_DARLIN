@@ -29,12 +29,12 @@ Next, go to a directory where you want to store the code and install all relevan
 ```bash
 code_directory='your/code/directory'
 cd $code_directory
-git clone https://github.com/ShouWenWang-Lab/carlin_hf
-cd carlin_hf
+git clone https://github.com/ShouWenWang-Lab/MosaicLineage
+cd MosaicLineage
 pip install -r requirements.txt
 python setup.py develop
 cd ..
-git clone https://github.com/ShouWenWang-Lab/snakemake_carlin
+git clone https://github.com/ShouWenWang-Lab/snakemake_DARLIN
 mkdir CARLIN_pipeline
 cd CARLIN_pipeline
 git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN
@@ -60,7 +60,7 @@ Please rename the files if they are not in this format. An example `config.ymal`
 ```yaml
 project_name : 'Li_112219'
 project_ID : '144505366'
-script_dir: '{code_directory}/snakemake_carlin/source'
+script_dir: '{code_directory}/snakemake_DARLIN/source'
 CARLIN_dir : '{code_directory}/CARLIN_pipeline'
 SampleList : ['HSC','MPP','MyP'] #Remove 1_S*, it will have few reads, affect the output
 cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat,sc10xV3
@@ -106,28 +106,28 @@ Next, select the desired project name and ID. In the above `config.yaml` file, w
 
 Then, run the snakemake script at the same directory as the `config.yaml` file
 ```bash
-snakemake -s $code_directory/snakemake_carlin/snakefile_get_data.py --configfile config.yaml --core 1
+snakemake -s $code_directory/snakemake_DARLIN/snakefile_get_data.py --configfile config.yaml --core 1
 ```
 
 ### CARLIN analsysis
 This command will generate the QC report and process each sample with the CARLIN pipeline
 ```bash
-snakemake -s $code_directory/packages/snakemake_carlin/snakefile_integrate_CARLIN.py  --configfile config.yaml --core 10
+snakemake -s $code_directory/packages/snakemake_DARLIN/snakefile_integrate_CARLIN.py  --configfile config.yaml --core 10
 ```
 
 Finally, you may run this command to get an html report across all samples
 ```bash
-snakemake -s $code_directory/packages/snakemake_carlin/snakefile_downstream_fast.py --configfile config.yaml --core 5 --ri -R generate_report -R plots 
+snakemake -s $code_directory/packages/snakemake_DARLIN/snakefile_downstream_fast.py --configfile config.yaml --core 5 --ri -R generate_report -R plots 
 ```
 The result will show up at the `merge_all` folder as shown in the above image. 
 
 
 ### A single-cell pipeline for libraries with higher amplification heterogneity
-We also developed our own CARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. This pipeline is written in jupyter notebook (`source/single_cell_CARLIN.ipynb`), and it requires to first install a companion repository `carlin_hf`. 
+We also developed our own CARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. This pipeline is written in jupyter notebook (`source/single_cell_CARLIN.ipynb`), and it requires to first install a companion repository `MosaicLineage`. 
 ```bash
 cd $code_directory
-git clone git@github.com:ShouWenWangLab/carlin_hf.git
-cd carlin_hf
+git clone git@github.com:ShouWenWangLab/MosaicLineage.git
+cd MosaicLineage
 python setup.py develop
 ```
 
@@ -135,7 +135,7 @@ Then, you need to add more parameters in the `config.yaml` file
 ```yaml
 project_name : 'Li_112219'
 project_ID : '144505366'
-script_dir: '{code_directory}/snakemake_carlin/source'
+script_dir: '{code_directory}/snakemake_DARLIN/source'
 CARLIN_dir : '{code_directory}/CARLIN_pipeline'
 SampleList : ['HSC','MPP','MyP'] #Remove 1_S*, it will have few reads, affect the output
 cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat,sc10xV3
@@ -154,7 +154,7 @@ single_cell_pipeline: # This is an extension, needed only if you run snakefile_s
 
 Finally, run 
 ```bash
-snakemake -s $code_directory/packages/snakemake_carlin/snakefile_single_cell_CARLIN.py  --configfile config.yaml --core 10
+snakemake -s $code_directory/packages/snakemake_DARLIN/snakefile_single_cell_CARLIN.py  --configfile config.yaml --core 10
 ```
 
 The result will show up as a jupyter notebook and a corresponding html report
