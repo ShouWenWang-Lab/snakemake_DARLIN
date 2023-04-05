@@ -60,7 +60,7 @@ Please rename the files if they are not in this format. An example `config.ymal`
 ```yaml
 project_name : 'Li_112219'
 project_ID : '144505366'
-script_dir: '{code_directory}/snakemake_DARLIN/source'
+script_dir: '{code_directory}/snakemake_DARLIN/darlin'
 CARLIN_dir : '{code_directory}/CARLIN_pipeline'
 SampleList : ['HSC','MPP','MyP'] #Remove 1_S*, it will have few reads, affect the output
 cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat,sc10xV3
@@ -135,7 +135,7 @@ Then, you need to add more parameters in the `config.yaml` file
 ```yaml
 project_name : 'Li_112219'
 project_ID : '144505366'
-script_dir: '{code_directory}/snakemake_DARLIN/source'
+script_dir: '{code_directory}/snakemake_DARLIN/darlin'
 CARLIN_dir : '{code_directory}/CARLIN_pipeline'
 SampleList : ['HSC','MPP','MyP'] #Remove 1_S*, it will have few reads, affect the output
 cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat,sc10xV3

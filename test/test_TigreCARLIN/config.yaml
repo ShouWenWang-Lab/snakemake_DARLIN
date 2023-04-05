@@ -1,6 +1,6 @@
 project_name : 'cC_TC_allele'
 project_ID : '290654424'
-script_dir: '../../source'
+script_dir: '../../darlin'
 CARLIN_dir : '../../../CARLIN_pipeline'
 SampleList: ['test']
 cfg_type : 'BulkDNA' # BulkDNA_Tigre (with a UMI QC threshold 25), BulkDNA (UMI QC threshold 30);  
