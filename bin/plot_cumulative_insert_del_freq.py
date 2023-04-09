@@ -7,7 +7,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from scipy.io import loadmat
 
-import help_functions as hf
+from darlin import help_functions as hf
 
 hf.set_rcParams(fontsize=16)
 sns.set_style("white")

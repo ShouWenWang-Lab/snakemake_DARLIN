@@ -58,7 +58,7 @@ rule plots:
         "CARLIN/{sub_dir}/merge_all/refined_results.csv"
     params:
         script_dir=script_dir,
-        CARLIN_dir=configCARLIN_dir,
+        CARLIN_dir=CARLIN_dir,
         template=config['template'],
     run:
         hf.set_rcParams()
