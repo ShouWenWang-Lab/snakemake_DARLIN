@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import sys
 from darlin import help_functions as hf
+from darlin.settings import script_dir, QC_dir, ref_dir, CARLIN_dir
 #configfile: "config.yaml"  # command line way to set it: --configfile 'path/to/config'
 #workdir: config['data_dir'] # set working directory, a command-line way to set it: --directory 'path/to/your/dir'
 config['data_dir']=str(os.getcwd())
@@ -10,9 +11,6 @@ config['data_dir']=str(os.getcwd())
 ##################
 ## preprocessing
 ################## 
-
-config['CARLIN_dir']=hf.update_CARLIN_dir(config['CARLIN_dir'],config['template'])
-print("Updated CARLIN_dir:"+ str(config['CARLIN_dir']))
 
 
 print(f'Current work dir: {os.getcwd()}')
@@ -29,12 +27,6 @@ if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.key
     
 CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
     
-
-# remove the flag file of the workflow if the sbatch is not actually run to finish
-for sample in SampleList:
-    if not os.path.exists(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis_actually.done'):
-        if os.path.exists(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis.done'):
-            os.remove(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis.done') 
         
 ##################
 ## start the rules

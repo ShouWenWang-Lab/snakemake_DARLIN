@@ -60,7 +60,7 @@ Please rename the files if they are not in this format. An example `config.ymal`
 project_name : 'Li_112219'
 project_ID : '144505366'
 SampleList : ['HSC','MPP','MyP'] #Remove 1_S*, it will have few reads, affect the output
-cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat,sc10xV3
+cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, Camellia,sc10xV3
 template : 'cCARLIN' # short_primer_set: {Tigre_2022_v2, Rosa_v2, cCARLIN}, long_primer_set: {Tigre_2022,Rosa,cCARLIN}
 read_cutoff_UMI_override : [3,10] # assume to be a list, UMI cutoff is the same as CB cutoff for single-cell protocol
 CARLIN_memory_factor : 300 # request memory at X times the size of the pear fastq file.
@@ -76,7 +76,7 @@ CARLIN_max_run_time : 12 # hour
  * `BulkRNA_Tigre_14UMI`: Bulk CARLIN library with Tigre locus, with a UMI of 14bp
  * `BulkRNA_Rosa_14UMI`:  Bulk CARLIN library with Rosa locus, with a UMI of 14bp
  * `BulkRNA_12UMI`: Bulk CARLIN library with Col1a1 locus, with a UMI of 12bp
- * `scLimeCat`: Single-cell CARLIN library using the Camellia-seq protocol
+ * `Camellia`: Single-cell CARLIN library using the Camellia-seq protocol
  * `sc10xV3`: Single-cell CARLIN library using the 10X v3 protocol
  
  `template` should match the primer set used. We have template corresponding to shorter primers in TC and RC: {`Tigre_2022_v2`, `Rosa_v2`}, and longer primers: {`Tigre_2022`, `Rosa`}. For Col1a1 locus, we only have a single primer set, corresponding to tempalte `cCARLIN`. 
@@ -133,7 +133,7 @@ Then, you need to add more parameters in the `config.yaml` file
 project_name : 'Li_112219'
 project_ID : '144505366'
 SampleList : ['HSC','MPP','MyP'] #Remove 1_S*, it will have few reads, affect the output
-cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat,sc10xV3
+cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, Camellia,sc10xV3
 template : 'cCARLIN' # short_primer_set: {Tigre_2022_v2, Rosa_v2, cCARLIN}, long_primer_set: {Tigre_2022,Rosa,cCARLIN}
 read_cutoff_UMI_override : [3,10] # assume to be a list, UMI cutoff is the same as CB cutoff for single-cell protocol
 CARLIN_memory_factor : 300 # request memory at X times the size of the pear fastq file.
