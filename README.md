@@ -41,7 +41,6 @@ git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN
 cd ..
 ```
 
-
 Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/ which provides a pre-compiled version to run on Linux) and `matlab` so that they will be available as commands in terminal. Also make sure that both `fastqc` and `multiqc` are globally accessible. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command in this pipeline
 ```bash
 module load matlab
@@ -60,8 +59,6 @@ Please rename the files if they are not in this format. An example `config.ymal`
 ```yaml
 project_name : 'Li_112219'
 project_ID : '144505366'
-script_dir: '{code_directory}/snakemake_DARLIN/darlin'
-CARLIN_dir : '{code_directory}/CARLIN_pipeline'
 SampleList : ['HSC','MPP','MyP'] #Remove 1_S*, it will have few reads, affect the output
 cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat,sc10xV3
 template : 'cCARLIN' # short_primer_set: {Tigre_2022_v2, Rosa_v2, cCARLIN}, long_primer_set: {Tigre_2022,Rosa,cCARLIN}
@@ -106,18 +103,18 @@ Next, select the desired project name and ID. In the above `config.yaml` file, w
 
 Then, run the snakemake script at the same directory as the `config.yaml` file
 ```bash
-snakemake -s $code_directory/snakemake_DARLIN/snakefile_get_data.py --configfile config.yaml --core 1
+snakemake -s $code_directory/snakemake_DARLIN/snakefiles/snakefile_get_data.py --configfile config.yaml --core 1
 ```
 
 ### CARLIN analsysis
 This command will generate the QC report and process each sample with the CARLIN pipeline
 ```bash
-snakemake -s $code_directory/packages/snakemake_DARLIN/snakefile_integrate_CARLIN.py  --configfile config.yaml --core 10
+snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_integrate_CARLIN.py  --configfile config.yaml --core 10
 ```
 
 Finally, you may run this command to get an html report across all samples
 ```bash
-snakemake -s $code_directory/packages/snakemake_DARLIN/snakefile_downstream_fast.py --configfile config.yaml --core 5 --ri -R generate_report -R plots 
+snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_downstream_fast.py --configfile config.yaml --core 5 --ri -R generate_report -R plots 
 ```
 The result will show up at the `merge_all` folder as shown in the above image. 
 
@@ -135,8 +132,6 @@ Then, you need to add more parameters in the `config.yaml` file
 ```yaml
 project_name : 'Li_112219'
 project_ID : '144505366'
-script_dir: '{code_directory}/snakemake_DARLIN/darlin'
-CARLIN_dir : '{code_directory}/CARLIN_pipeline'
 SampleList : ['HSC','MPP','MyP'] #Remove 1_S*, it will have few reads, affect the output
 cfg_type : 'sc10xV3' # available protocol: BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scLimeCat,sc10xV3
 template : 'cCARLIN' # short_primer_set: {Tigre_2022_v2, Rosa_v2, cCARLIN}, long_primer_set: {Tigre_2022,Rosa,cCARLIN}
@@ -154,7 +149,7 @@ single_cell_pipeline: # This is an extension, needed only if you run snakefile_s
 
 Finally, run 
 ```bash
-snakemake -s $code_directory/packages/snakemake_DARLIN/snakefile_single_cell_CARLIN.py  --configfile config.yaml --core 10
+snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_single_cell_CARLIN.py  --configfile config.yaml --core 10
 ```
 
 The result will show up as a jupyter notebook and a corresponding html report
