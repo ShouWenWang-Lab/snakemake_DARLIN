@@ -1,5 +1,6 @@
 /**/.ipynb_checkpoints
 /**/__pycache__
+/**/__pycache__/*
 *.svg
 /**/.snakemake
 *.done
