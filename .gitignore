@@ -13,7 +13,7 @@ test/bulk_TigreCARLIN/*
 test/sc-10X/*
 !test/sc-10X/config.yaml
 !test/sc-10X/raw_fastq
-test/Camellia/*
-!test/Camellia/config.yaml
-!test/Camellia/raw_fastq
+test/scCamellia/*
+!test/scCamellia/config.yaml
+!test/scCamellia/raw_fastq
 *.egg-info
