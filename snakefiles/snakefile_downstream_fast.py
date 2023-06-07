@@ -67,6 +67,11 @@ rule plots:
         # hf.analyze_allele_frequency_count(input_dir,SampleList)
         print("---- Sample statistics csv (also do allele analysis) -----")
         hf.generate_csv(input_dir,SampleList,cfg_type=cfg_type)
+
+        file_path=f'CARLIN/{wildcards.sub_dir}/merge_all/refined_results.csv'
+        df_results=pd.read_csv(file_path,index_col=0).sort_values('sample')
+        df_results.to_csv(file_path)
+
         print("---- Plot sample statistics -----")
         hf.plot_data_statistics_across_samples(input_dir)
         
