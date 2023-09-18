@@ -30,21 +30,19 @@ Next, go to a directory where you want to store the code and install all relevan
 code_directory='your/code/directory'
 cd $code_directory
 
-git clone https://github.com/ShouWenWang-Lab/MosaicLineage
+git clone https://github.com/ShouWenWang-Lab/MosaicLineage --depth=1
 cd MosaicLineage
 pip install -r requirements.txt
 python setup.py develop
 cd ..
 
-git clone https://github.com/ShouWenWang-Lab/snakemake_DARLIN
+git clone https://github.com/ShouWenWang-Lab/snakemake_DARLIN --depth=1
 cd snakemake_DARLIN
 python setup.py develop
 cd ..
 
 mkdir CARLIN_pipeline
-cd CARLIN_pipeline
-git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN
-cd ..
+git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN CARLIN_pipeline --depth=1
 ```
 
 Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/ which provides a pre-compiled version to run on Linux) and `matlab` so that they will be available as commands in terminal. Also make sure that both `fastqc` and `multiqc` are globally accessible. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command in this pipeline
