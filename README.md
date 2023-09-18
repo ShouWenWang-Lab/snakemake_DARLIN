@@ -29,12 +29,18 @@ Next, go to a directory where you want to store the code and install all relevan
 ```bash
 code_directory='your/code/directory'
 cd $code_directory
+
 git clone https://github.com/ShouWenWang-Lab/MosaicLineage
 cd MosaicLineage
 pip install -r requirements.txt
 python setup.py develop
 cd ..
+
 git clone https://github.com/ShouWenWang-Lab/snakemake_DARLIN
+cd snakemake_DARLIN
+python setup.py develop
+cd ..
+
 mkdir CARLIN_pipeline
 cd CARLIN_pipeline
 git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN
@@ -45,6 +51,8 @@ Additionally, you will need to install [pear](https://www.h-its.org/downloads/pe
 ```bash
 module load matlab
 ```
+
+Matlab should have Bioinformatics Toolbox and Image Processing Toolbox addons installed.
 
 ## Running the pipeline
 
