@@ -1,15 +1,12 @@
 # Introduction
 
-This is a pipeline written with snakemake to automatically manage the data preprocessing (e.g., run PEAR to merge R1 and R2), sequence quality control, and run CARLIN pipeline. All you need to provide is the raw fastq file.
+This is a pipeline written in Snakemake to automatically manage the data preprocessing (e.g., run PEAR to merge R1 and R2), sequence quality control, and run CARLIN pipeline. It is especially useful when you have multiple samples from a single sequencing run. All you have to do is to provide the relevant information in a `config.yaml` file.
 
-This pipeline is especially useful when you have multiple samples from a single sequencing run. All you have to do is to provide the relevant information in a `config.yaml` file.   
+Here is an example of the file structure:
 
-
-This is a brief example:
 ![image info](https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png)
 
-This pipeline must be used together with a customized version of the CARLIN pipeline at https://github.com/ShouWenWang-Lab/Custom_CARLIN, and it is designed to work on SLURM linux server. 
-
+Note that this pipeline must be used with a customized version of the [CARLIN pipeline](https://github.com/ShouWenWang-Lab/Custom_CARLIN).
 
 ## Clone the code 
 
@@ -129,7 +126,6 @@ snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_down
 ```
 The result will show up at the `merge_all` folder as shown in the above image. 
 
-
 ### A single-cell pipeline for libraries with higher amplification heterogneity
 
 We also developed our own CARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. This pipeline is written in jupyter notebook (`source/single_cell_CARLIN.ipynb`), and it requires to first install a companion repository `MosaicLineage`. 
@@ -164,5 +160,6 @@ Finally, run
 snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_single_cell_CARLIN.py  --configfile config.yaml --core 10
 ```
 
-The result will show up as a jupyter notebook and a corresponding html report
+The result will show up as a jupyter notebook and a corresponding html report:
+
 ![image](https://user-images.githubusercontent.com/4595786/205761409-2f5678c2-51aa-409b-93f1-ab32509a2c74.png)
