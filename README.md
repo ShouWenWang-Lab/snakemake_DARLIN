@@ -45,16 +45,19 @@ mkdir CARLIN_pipeline
 git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN CARLIN_pipeline --depth=1
 ```
 
-Additionally, you will need to install [pear](https://www.h-its.org/downloads/pear-academic/ which provides a pre-compiled version to run on Linux) and `matlab` so that they will be available as commands in terminal. Also make sure that both `fastqc` and `multiqc` are globally accessible. We only consider running this pipeline on a remote server using a SLURM system. The matlab will be loaded with the command in this pipeline
+Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academic/) and MATLAB. In an HPC environment, MATLAB can be loaded with the command:
 ```bash
 module load matlab
 ```
 
-Matlab should have Bioinformatics Toolbox and Image Processing Toolbox addons installed.
+MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons installed.
 
 ## Running the pipeline
 
+The pipeline assumes that it is being called on a server with SLURM. If not, you can copy-and-paste the generated command and run it locally.
+
 ### file structure
+
 As indicated in the above example, the `config.yaml` file should be at the root folder of a project, and the fastq data should be at the folder `raw_fastq`. 
 We assume that the data is generated with Miseq machine from Illumina. Specifically, we assume that the file name starts with a sample_ID, and has both R1 and R2: 
 ```python
@@ -96,6 +99,7 @@ CARLIN_max_run_time : 12 # hour
 `CARLIN_max_run_time`: When running on o2, the maximum run time to request, in the unit of hours
 
 ### Getting data from base space
+
 When the fastq files are not downloaded yet in the `raw_fastq` folder, and the data sits at base space of Illumina, you can provide `project_name` and `project_ID` in `config.yaml` to automaically download the data. 
 
 First, check the available fastq data with the terminal command 
@@ -113,6 +117,7 @@ snakemake -s $code_directory/snakemake_DARLIN/snakefiles/snakefile_get_data.py -
 ```
 
 ### CARLIN analsysis
+
 This command will generate the QC report and process each sample with the CARLIN pipeline
 ```bash
 snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_integrate_CARLIN.py  --configfile config.yaml --core 10
@@ -126,6 +131,7 @@ The result will show up at the `merge_all` folder as shown in the above image.
 
 
 ### A single-cell pipeline for libraries with higher amplification heterogneity
+
 We also developed our own CARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. This pipeline is written in jupyter notebook (`source/single_cell_CARLIN.ipynb`), and it requires to first install a companion repository `MosaicLineage`. 
 ```bash
 cd $code_directory
