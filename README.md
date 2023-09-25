@@ -1,21 +1,19 @@
-# Introduction
+# DARLIN
 
 This is a Snakemake pipeline to automatically preprocess data (e.g., run PEAR to merge R1 and R2), conduct sequence quality control, and run the CARLIN pipeline. It is especially useful when you have multiple samples from a single sequencing run.
 
 Note that this pipeline must be used with a customized version of the [CARLIN pipeline](https://github.com/ShouWenWang-Lab/Custom_CARLIN).
 
-## Clone the code 
+## Installation
 
-Make an environment called `snakemake`
+First, make a conda environment:
 
 ```bash
-conda install -n base -c conda-forge mamba --yes
-conda activate base
-mamba create -c conda-forge -c bioconda -n snakemake snakemake
-conda activate snakemake
+conda create -n darlin
+conda activate darlin
+conda install -c conda-forge -c bioconda snakemake fastqc multiqc tree -y
 pip install --user ipykernel
 pip install jupyterlab umi_tools seaborn papermill biopython
-mamba install -c bioconda fastqc multiqc tree --yes
 python -m ipykernel install --user --name=snakemake
 ```
 
@@ -48,7 +46,7 @@ module load matlab
 
 MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons installed.
 
-## Running the pipeline
+## Usage
 
 The pipeline assumes that it is being called on a server with SLURM. If not, you can copy-and-paste the generated command and run it locally.
 
