@@ -56,8 +56,8 @@ rule fastqc_before_pear:
         "fastqc_before_pear/{sample}_L001_R1_001_fastqc.html",
         "fastqc_before_pear/{sample}_L001_R2_001_fastqc.html"
     run:
-        shell(f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear"),
-        shell(f"sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear")
+        shell(f"bash {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear"),
+        shell(f"bash {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear")
         
 rule pear:
     input:
@@ -66,7 +66,7 @@ rule pear:
     output:
         "pear_output/{sample}.trimmed.pear.assembled.fastq"
     run:
-        shell(f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear")
+        shell(f"bash {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear")
         
         
         
@@ -76,7 +76,7 @@ rule fastqc_after_pear:
     output:
         "fastqc_after_pear/{sample}.trimmed.pear.assembled_fastqc.html"
     run:
-        shell(f"sh {script_dir}/run_fastqc.sh {input} fastqc_after_pear")
+        shell(f"bash {script_dir}/run_fastqc.sh {input} fastqc_after_pear")
 
 
 rule multiqc_before_pear:
@@ -85,7 +85,7 @@ rule multiqc_before_pear:
     output:
         "fastqc_before_pear/multiqc_report.html"
     run: 
-        shell(f"sh {script_dir}/run_multiqc.sh fastqc_before_pear")
+        shell(f"bash {script_dir}/run_multiqc.sh fastqc_before_pear")
         
         
 rule multiqc_after_pear:
@@ -94,7 +94,7 @@ rule multiqc_after_pear:
     output:
         "fastqc_after_pear/multiqc_report.html"
     run: 
-        shell(f"sh {script_dir}/run_multiqc.sh fastqc_after_pear")
+        shell(f"bash {script_dir}/run_multiqc.sh fastqc_after_pear")
         
         
 rule CARLIN:
@@ -123,4 +123,4 @@ rule CARLIN:
         print(f"{wildcards.sample}:   Requested memory {requested_memory} G")
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
-        shell(f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {sbatch} {CARLIN_max_run_time}")
+        shell(f"bash {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_floor} {requested_memory} {sbatch} {CARLIN_max_run_time}")

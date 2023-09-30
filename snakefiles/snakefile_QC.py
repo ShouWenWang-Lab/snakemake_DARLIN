@@ -43,7 +43,7 @@ rule fastqc_before_pear:
     output:
         touch("fastqc_before_pear/{sample}.done")
     run:
-        commands=[f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear", f"sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"]
+        commands=[f"bash {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear", f"bash {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"]
 
         file_size = os.path.getsize(f'{input.fq_R1}')/1000000000
         print(f"{wildcards.sample}:   FileSize {file_size} G")
@@ -70,7 +70,7 @@ rule fastqc_after_pear:
     output:
         touch("fastqc_after_pear/{sample}.done")
     run:
-        command=f"sh {script_dir}/run_fastqc.sh {input} fastqc_after_pear"
+        command=f"bash {script_dir}/run_fastqc.sh {input} fastqc_after_pear"
         
         file_size = os.path.getsize(f'{input}')/1000000000
         print(f"{wildcards.sample}:   FileSize {file_size} G")

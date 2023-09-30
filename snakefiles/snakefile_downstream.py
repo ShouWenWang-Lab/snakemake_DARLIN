@@ -56,7 +56,7 @@ rule merge_all_sample:
     run:
         print("----Merge all samples -----")
         input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
-        shell("sh {params.script_dir}/merge_sample.sh  {params.CARLIN_dir} {input_dir} {params.Samples}  {params.template}")
+        shell("bash {params.script_dir}/merge_sample.sh  {params.CARLIN_dir} {input_dir} {params.Samples}  {params.template}")
         
         
         
@@ -74,7 +74,7 @@ rule CARLIN_csv:
         print("----generate csv results -----")
         input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
         print(f"SampleList:   {params.Samples}")
-        shell("sh {params.script_dir}/generate_csv.sh {params.CARLIN_dir} {input_dir} {params.Samples}  {params.template}")
+        shell("bash {params.script_dir}/generate_csv.sh {params.CARLIN_dir} {input_dir} {params.Samples}  {params.template}")
         
         
 

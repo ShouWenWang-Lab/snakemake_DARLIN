@@ -46,7 +46,7 @@ rule pear:
         script_dir=script_dir
         out_dir=f"pear_output"
         os.makedirs(out_dir,exist_ok=True)
-        command=f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear"
+        command=f"bash {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear"
         
         file_size = os.path.getsize(f'raw_fastq/{wildcards.sample}_L001_R1_001.fastq.gz')/1000000000
         print(f"{wildcards.sample}:   FileSize {file_size} G")

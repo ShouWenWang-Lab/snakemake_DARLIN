@@ -30,7 +30,7 @@ rule all:
         #wk_dir=config['data_dir']+'/pear_output'
         df_list=[]
         for sample in SampleList:
-            os.system(f"sh {script_dir}/split_locus.sh  {sample} pear_output")
+            os.system(f"bash {script_dir}/split_locus.sh  {sample} pear_output")
             df_temp=pd.read_csv(f'pear_output/{sample}.split_locus.tsv',header=None,names=['locus','data','sample'])
             df_list.append(df_temp)
         df_data=pd.concat(df_list)

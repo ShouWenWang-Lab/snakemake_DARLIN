@@ -68,10 +68,10 @@ rule CARLIN:
                 # part 1: run pear
                 out_dir=f"pear_output"
                 os.makedirs(out_dir,exist_ok=True)
-                command_1=f"sh {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear"
-                command_2=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
-                command_3=f"sh {script_dir}/run_fastqc.sh pear_output/{wildcards.sample}.trimmed.pear.assembled.fastq  fastqc_after_pear"
-                #command_4=f"sh {script_dir}/run_multiqc.sh fastqc_before_pear; sh {script_dir}/run_multiqc.sh fastqc_after_pear"
+                command_1=f"bash {script_dir}/run_pear.sh {input.fq_R1} {input.fq_R2} pear_output/{wildcards.sample}.trimmed.pear"
+                command_2=f"bash {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
+                command_3=f"bash {script_dir}/run_fastqc.sh pear_output/{wildcards.sample}.trimmed.pear.assembled.fastq  fastqc_after_pear"
+                #command_4=f"bash {script_dir}/run_multiqc.sh fastqc_before_pear; sh {script_dir}/run_multiqc.sh fastqc_after_pear"
             else:
                 command_1="echo command_1"
                 command_2="echo command_2"
@@ -81,7 +81,7 @@ rule CARLIN:
         elif cfg_type.startswith('sc'):
             input_dir=config['data_dir']+'/raw_fastq'
             if (not os.path.exists(f'{output_dir}/{wildcards.sample}/Summary.mat')):
-                command_1=f"sh {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
+                command_1=f"bash {script_dir}/run_fastqc.sh {input.fq_R1} fastqc_before_pear; sh {script_dir}/run_fastqc.sh {input.fq_R2} fastqc_before_pear"
                 command_2="echo command_2"
                 command_3="echo command_3"
                 #command_4="echo command_2"
@@ -111,7 +111,7 @@ rule CARLIN:
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
         # do not run sbatch within this command
-        command_4=f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_UMI_override} {read_cutoff_CB_override} {requested_memory} {0} {CARLIN_max_run_time}"
+        command_4=f"bash {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_UMI_override} {read_cutoff_CB_override} {requested_memory} {0} {CARLIN_max_run_time}"
 
         combined_command=f"{command_1}; {command_2}; {command_3}; {command_4}"
         

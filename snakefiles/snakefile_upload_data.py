@@ -39,7 +39,7 @@ rule transfer_data:
         script_dir=script_dir
     run:
         root_sub_dir=config['data_dir'].split('/DATA/')[1]
-        shell("sh {params.script_dir}/transfer_data.sh {root_sub_dir}")
+        shell("bash {params.script_dir}/transfer_data.sh {root_sub_dir}")
         
         
 rule dvc:
@@ -55,7 +55,7 @@ rule dvc:
             for sample in SampleList:
                 os.system(f"dvc add {data_dir}/CARLIN/{cur_dir}/{sample}")
         
-        os.system(f"sh {params.script_dir}/_dvc.sh {data_dir}") # skip adding the CARLIN folder, includes "dvc push"
+        os.system(f"bash {params.script_dir}/_dvc.sh {data_dir}") # skip adding the CARLIN folder, includes "dvc push"
         
         
         

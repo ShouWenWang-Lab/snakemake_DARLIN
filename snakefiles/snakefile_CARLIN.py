@@ -76,7 +76,7 @@ rule CARLIN:
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
 
-        command=f"sh {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_override} {requested_memory} {0} {CARLIN_max_run_time}"
+        command=f"bash {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_override} {read_cutoff_override} {requested_memory} {0} {CARLIN_max_run_time}"
 
         
         job_name=f'Car_{wildcards.sample}'
