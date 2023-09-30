@@ -35,7 +35,8 @@ python setup.py develop
 cd ..
 
 mkdir CARLIN_pipeline
-git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN CARLIN_pipeline --depth=1
+cd CARLIN_pipeline
+git clone git@github.com:ShouWenWang-Lab/Custom_CARLIN.git
 ```
 
 Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academic/) and MATLAB. In an HPC environment, MATLAB can be loaded with the command:
