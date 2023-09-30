@@ -177,3 +177,10 @@ snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_sing
 The result will show up as a jupyter notebook and a corresponding html report:
 
 ![image](https://user-images.githubusercontent.com/4595786/205761409-2f5678c2-51aa-409b-93f1-ab32509a2c74.png)
+
+
+### Test
+To test if the pipeline has been installed correctly, please go to the `test` folder and run the command
+```bash
+bash test.sh
+```
