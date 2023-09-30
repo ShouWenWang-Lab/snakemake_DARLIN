@@ -3,7 +3,7 @@ project_ID : '290654424'
 SampleList: ['test']
 cfg_type : 'BulkRNA'  # used_cfg_type: {BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scCamellia,sc10xV3};  # our bulk DNA and RNA protocol results in the same sequence structure, and share common cfg file
 template : 'cCARLIN' # short_primer_set: {Tigre_2022_v2, Rosa_v2, cCARLIN}, long_primer_set: {Tigre_2022,Rosa,cCARLIN}
-read_cutoff_override : [4]
+read_cutoff_override : [2]
 read_cutoff_floor : 1  # the algorithm takes the max of ....; this variable is not actually useful, as it is overrided by read_cutoff_override
 CARLIN_memory_factor : 100 # request memory at X times the size of the pear fastq file.
 sbatch : 0 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
