@@ -39,7 +39,7 @@ cd CARLIN_pipeline
 git clone git@github.com:ShouWenWang-Lab/Custom_CARLIN.git
 ```
 
-Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academic/) and MATLAB. In an HPC environment, MATLAB can be loaded with the command:
+Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academic/) and MATLAB. MATLAB should be available in the command line interface. In an HPC environment, MATLAB can be loaded with the command:
 
 ```bash
 module load matlab
@@ -49,7 +49,9 @@ MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons in
 
 ## Usage
 
-The pipeline assumes that it is being called on a server with SLURM. If not, you can copy-and-paste the generated command and run it locally.
+The pipeline assumes that it is being called on a server with SLURM if `sbatch=1` in the config file (see below). If not, you can copy-and-paste the generated command and run it locally.
+
+With `sbatch=0`, it should run properly in a normal Linux system without SLURM. However, it cannot submit jobs and run them in parallel in this case.
 
 ### File structure
 
@@ -184,3 +186,14 @@ To test if the pipeline has been installed correctly, please go to the `test` fo
 ```bash
 bash test.sh
 ```
+
+### External links
+- A 30min video about DARLIN project in [Youtube](https://www.youtube.com/watch?v=TywIb_4cPk8) or [Bilibili](https://www.bilibili.com/video/BV1sw411F7hd/?spm_id_from=333.999.0.0&vd_source=88ba2b3e0a84657ca67330d8cba9e18f).
+
+- [MosaicLineage](https://github.com/ShouWenWang-Lab/MosaicLineage), A (mosaic) collection of python help functions related to lineage tracing data analysis, developed through the DARLIN project.
+
+- [Notebooks](https://github.com/ShouWenWang-Lab/DARLIN_notebooks) to reproduce Figure 4 and Figure 5 in our paper. It also illustrates how to use the MosaicLineage package there.
+
+- [Raw and intermediate data for these notebooks](https://zenodo.org/records/8422061).
+
+- [Shou-Wen Wang Lab website](https://www.shouwenwang-lab.com/)
