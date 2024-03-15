@@ -36,31 +36,31 @@ else:
 if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.keys()) and ('read_cutoff_override' in config.keys()):
     config['read_cutoff_UMI_override']=config['read_cutoff_override']
     
-CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
+DARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
 
     
 
 # remove the flag file of the workflow if the sbatch is not actually run to finish
 for sample in SampleList:
-    if not os.path.exists(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis_actually.done'):
-        if os.path.exists(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis.done'):
-            os.remove(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis.done') 
+    if not os.path.exists(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis_actually.done'):
+        if os.path.exists(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis.done'):
+            os.remove(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis.done') 
         
 ##################
 ## start the rules
 ################## 
 rule all:
     input: 
-        expand("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done",sample=SampleList,sub_dir=CARLIN_sub_dir)
+        expand("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done",sample=SampleList,sub_dir=DARLIN_sub_dir)
 
-rule CARLIN:        
+rule DARLIN:        
     input:
         fq_R1="raw_fastq/{sample}_L001_R1_001.fastq.gz",
         fq_R2="raw_fastq/{sample}_L001_R2_001.fastq.gz"
     output:
-        touch("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done")
+        touch("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done")
     run:
-        output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
+        output_dir=config['data_dir']+f'/DARLIN/{wildcards.sub_dir}'
         
         if cfg_type.startswith('Bulk'):
             input_dir=config['data_dir']+'/pear_output'

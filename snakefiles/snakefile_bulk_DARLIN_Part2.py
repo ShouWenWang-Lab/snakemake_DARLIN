@@ -36,9 +36,9 @@ if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.key
     config['read_cutoff_UMI_override']=config['read_cutoff_override']
     config['read_cutoff_CB_override']=10 
     
-CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
-print(f"Subdir: {CARLIN_sub_dir}")
-#CARLIN_sub_dir="results_cutoff_override_"+str(config['read_cutoff_override'])
+DARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
+print(f"Subdir: {DARLIN_sub_dir}")
+#DARLIN_sub_dir="results_cutoff_override_"+str(config['read_cutoff_override'])
 
 
 ##################
@@ -48,27 +48,27 @@ print(f"Subdir: {CARLIN_sub_dir}")
 
 rule all:
     input: 
-        expand("CARLIN/{sub_dir}/merge_all/refined_results.csv",sub_dir=CARLIN_sub_dir),
-        expand("CARLIN/{sub_dir}/merge_all/CARLIN_report.html",sub_dir=CARLIN_sub_dir),
+        expand("DARLIN/{sub_dir}/merge_all/refined_results.csv",sub_dir=DARLIN_sub_dir),
+        expand("DARLIN/{sub_dir}/merge_all/DARLIN_report.html",sub_dir=DARLIN_sub_dir),
         
         
 
 rule plots:
     output:
-        "CARLIN/{sub_dir}/merge_all/refined_results.csv"
+        "DARLIN/{sub_dir}/merge_all/refined_results.csv"
     params:
         script_dir=script_dir,
         CARLIN_dir=CARLIN_dir,
         template=config['template'],
     run:
         hf.set_rcParams()
-        input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
+        input_dir=config['data_dir']+f'/DARLIN/{wildcards.sub_dir}'
         # print("---- Allele analysis -----")
         # hf.analyze_allele_frequency_count(input_dir,SampleList)
         print("---- Sample statistics csv (also do allele analysis) -----")
         hf.generate_csv(input_dir,SampleList,cfg_type=cfg_type)
 
-        file_path=f'CARLIN/{wildcards.sub_dir}/merge_all/refined_results.csv'
+        file_path=f'DARLIN/{wildcards.sub_dir}/merge_all/refined_results.csv'
         df_results=pd.read_csv(file_path,index_col=0).sort_values('sample')
         df_results.to_csv(file_path)
 
@@ -95,15 +95,15 @@ rule plots:
 # make sure you have a kernel that could run this notebook, and set it as the default kernel for this notebook
 rule generate_report:
     input:
-        "CARLIN/{sub_dir}/merge_all/refined_results.csv"
+        "DARLIN/{sub_dir}/merge_all/refined_results.csv"
     output:
-        "CARLIN/{sub_dir}/merge_all/CARLIN_report.html"
+        "DARLIN/{sub_dir}/merge_all/DARLIN_report.html"
     run:
         print("----generate report -----")
         Samples=','.join(SampleList)
         data_dir=os.path.join(config['data_dir'],'CARLIN', wildcards.sub_dir)
-        shell(f"papermill  {QC_dir}/CARLIN_report.ipynb  {data_dir}/merge_all/CARLIN_report.ipynb  -p data_dir {data_dir} -p Samples {Samples}")
-        shell(f"jupyter nbconvert --to html {data_dir}/merge_all/CARLIN_report.ipynb")
+        shell(f"papermill  {QC_dir}/DARLIN_report.ipynb  {data_dir}/merge_all/DARLIN_report.ipynb  -p data_dir {data_dir} -p Samples {Samples}")
+        shell(f"jupyter nbconvert --to html {data_dir}/merge_all/DARLIN_report.ipynb")
         
         
         

@@ -13,4 +13,5 @@ single_cell_pipeline:
     distance_relative_threshold: 0.03 # 5% error rate, will be multipled with the sequence length
     read_ratio_threshold: 0.6
     seq_3prime_upper_N: 15
-    output_folder: 'Shouwen_Method'
+    output_folder: 'python_DARLIN_output'
+    kernel: 'cospar_test'

@@ -33,9 +33,9 @@ else:
     SampleList=config['SampleList']
 print(f'SampleList: {SampleList}')
     
-CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_override']]
-print(f"Subdir: {CARLIN_sub_dir}")
-#CARLIN_sub_dir="results_cutoff_override_"+str(config['read_cutoff_override'])
+DARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_override']]
+print(f"Subdir: {DARLIN_sub_dir}")
+#DARLIN_sub_dir="results_cutoff_override_"+str(config['read_cutoff_override'])
 
 ##################
 ## start the rules
@@ -44,18 +44,18 @@ print(f"Subdir: {CARLIN_sub_dir}")
 
 rule all:
     input: 
-        expand("CARLIN/{sub_dir}/{sample}/ad_hoc.done",sub_dir=CARLIN_sub_dir,sample=SampleList),
+        expand("DARLIN/{sub_dir}/{sample}/ad_hoc.done",sub_dir=DARLIN_sub_dir,sample=SampleList),
         
 rule analysis:
     output:
-        touch("CARLIN/{sub_dir}/{sample}/ad_hoc.done")
+        touch("DARLIN/{sub_dir}/{sample}/ad_hoc.done")
     params:
         script_dir=script_dir,
         CARLIN_dir=CARLIN_dir,
         Samples=','.join(SampleList),
         template=config['template']
     run:
-        input_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
+        input_dir=config['data_dir']+f'/DARLIN/{wildcards.sub_dir}'
         
         # command=f"$matlab_terminal  -nodisplay -nosplash -nodesktop -r \"cd \'{params.CARLIN_dir}\'; output_selected_from_summary(\'{wildcards.sample}\',\'{input_dir}\',\'{params.template}\'); exit;\""
         command=f"cd '{params.CARLIN_dir}'; output_selected_from_summary('{wildcards.sample}','{input_dir}','{params.template}');"

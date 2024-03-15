@@ -2,32 +2,27 @@
 
 This is a Snakemake pipeline to automatically preprocess data (e.g., run PEAR to merge R1 and R2), conduct sequence quality control, and run the CARLIN pipeline. It is especially useful when you have multiple samples from a single sequencing run.
 
-Note that this pipeline must be used with a customized version of the [CARLIN pipeline](https://github.com/ShouWenWang-Lab/Custom_CARLIN).
+Note that this pipeline must be used with a customized version of the [CARLIN pipeline](https://github.com/ShouWenWang-Lab/Custom_CARLIN), which we adapted from the original software to deal with several different DARLIN references in the CA, TA, and RA loci respectively.
 
 ## Installation
 
 First, make a conda environment:
 
 ```bash
-conda create -n darlin
-conda activate darlin
+kernel_name='snakemake_darlin'
+conda create -n $kernel_name
+conda activate $kernel_name
 conda install -c conda-forge -c bioconda snakemake fastqc multiqc tree -y
 pip install --user ipykernel
 pip install jupyterlab umi_tools seaborn papermill biopython
-python -m ipykernel install --user --name=snakemake
+python -m ipykernel install --user --name=$kernel_name
 ```
 
 Next, go to a directory where you want to store the code and install all relevant packages
 
 ```bash
-code_directory='your/code/directory'
+code_directory='.' # change it to the directory where you want to put the packages
 cd $code_directory
-
-git clone https://github.com/ShouWenWang-Lab/MosaicLineage --depth=1
-cd MosaicLineage
-pip install -r requirements.txt
-python setup.py develop
-cd ..
 
 git clone https://github.com/ShouWenWang-Lab/snakemake_DARLIN --depth=1
 cd snakemake_DARLIN
@@ -36,7 +31,7 @@ cd ..
 
 mkdir CARLIN_pipeline
 cd CARLIN_pipeline
-git clone git@github.com:ShouWenWang-Lab/Custom_CARLIN.git
+git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN --depth=1
 ```
 
 Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academic/) and MATLAB. In an HPC environment, MATLAB can be loaded with the command:
@@ -45,11 +40,11 @@ Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academi
 module load matlab
 ```
 
-MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons installed.
+MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons installed. FastQC and MultiQC should also be available from the command line, otherwise you will not get the QC report (however, you can finish the DARLIN preprocessing with them).
 
 ## Usage
 
-The pipeline assumes that it is being called on a server with SLURM. If not, you can copy-and-paste the generated command and run it locally.
+The pipeline assumes that it is being called on a server with SLURM if sbatch=1, a parameter specified in the config file. If you are not using a SLURM server or want to run it locally on your own computer, please set sbatch=0. Alternatively, you can copy-and-paste the generated command and run it locally.
 
 ### File structure
 
@@ -76,7 +71,6 @@ read_cutoff_UMI_override : [3,10] # assume to be a list, UMI cutoff is the same 
 CARLIN_memory_factor : 300 # request memory at X times the size of the pear fastq file.
 sbatch : 1 # 1, run sbatch job;  0, run in the interactive mode. 
 CARLIN_max_run_time : 12 # hour
-sbatch_mode: 'default' # requested partion name when submitting a SLURM job 
 ```
 
 `code_directory` should be the same directory where you clone the code. 
@@ -101,8 +95,6 @@ sbatch_mode: 'default' # requested partion name when submitting a SLURM job
 
 `CARLIN_max_run_time`: When running on o2, the maximum run time to request, in the unit of hours.
 
-`sbatch_mode`: Requested partion name when submitting a SLURM job 
-
 ### Getting data from base space
 
 When the fastq files are not downloaded yet in the `raw_fastq` folder, and the data sits at base space of Illumina, you can provide `project_name` and `project_ID` in `config.yaml` to automaically download the data.
@@ -118,7 +110,11 @@ bs list project
 
 Next, select the desired project name and ID. In the above `config.yaml` file, we selected the data from the first entry.
 
-Then, run the snakemake script at the same directory as the `config.yaml` file:
+Next, activate the correct environment
+```bash
+conda activate snakemake_darlin # activate the environment
+```
+and run the snakemake script at the same directory as the `config.yaml` file:
 
 ```bash
 snakemake -s $code_directory/snakemake_DARLIN/snakefiles/snakefile_get_data.py --configfile config.yaml --core 1
@@ -142,12 +138,33 @@ The result will show up at the `merge_all` folder as shown in the above image.
 
 ### A single-cell pipeline for libraries with higher amplification heterogneity
 
-We also developed our own DARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. This pipeline is written in jupyter notebook (`QC/single_cell_DARLIN-10x.ipynb` and `QC/single_cell_DARLIN-scCamellia.ipynb`), and it requires to first install a companion repository `MosaicLineage`.  To run it, you also need to install a python kernel called 'cospar_test' that have all the required packages needed for running this notebook. 
+We also developed our own DARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. It is much faster than the CARLIN pipeline written in Matlab, and is written in python so that it is freely available and the Matlab installation is not required. We execute a jupyter notebook (`QC/single_cell_DARLIN-10x.ipynb` or `QC/single_cell_DARLIN-scCamellia.ipynb`) to obtain the results and also quality control plots simultaneously.
+
+To run this, you need to setup a proper environment, which we may call `DARLIN_analysis`. Particulary, it requires our in-house package called `MosaicLineage`.
 
 ```bash
+code_directory='.' # change it to the directory where you want to put the packages
 cd $code_directory
-git clone git@github.com:ShouWenWang-Lab/MosaicLineage.git
+kernel_name='DARLIN_analysis'
+conda create -n $kernel_name python=3.8 --yes
+conda activate $kernel_name
+pip install cospar
+pip install --user ipykernel
+pip install pytest black ipywidgets biotite
+pip install pytest-datadir pytest-cov umi_tools toolz jupyterlab pyyaml scikit-bio biopython matplotlib_venn wand gseapy==0.9.13 seaborn==0.11.2 pre-commit scikit-learn==1.1.1 pandas==1.5.3
+python -m ipykernel install --user --name=$kernel_name
+pip uninstall cospar # uninstall the old version, and install the latest
+cd $code_directory
+git clone https://github.com/ShouWenWang-Lab/cospar --depth=1
+cd cospar
+python setup.py develop
+cd $code_directory
+git clone https://github.com/ShouWenWang-Lab/MosaicLineage --depth=1
 cd MosaicLineage
+python setup.py develop
+cd $code_directory
+git clone https://github.com/ShouWenWang-Lab/snakemake_DARLIN --depth=1
+cd snakemake_DARLIN
 python setup.py develop
 ```
 
@@ -169,6 +186,7 @@ single_cell_pipeline: # This is an extension, needed only if you run snakefile_s
     read_ratio_threshold: 0.6
     seq_3prime_upper_N: 15
     output_folder: 'python_DARLIN_output'
+    kernel: 'DARLIN_analysis'
 ```
 
 Finally, run:
@@ -183,7 +201,7 @@ The result will show up as a jupyter notebook and a corresponding html report:
 
 
 ### Test
-To test if the pipeline has been installed correctly, please go to the `test` folder and run the command. Also, the test module gives examples on how to use this package.
+To test if the pipeline has been installed correctly, please go to the `test` folder and run the command
 ```bash
 bash test.sh
 ```

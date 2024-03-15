@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description="run sbatch jobs")
 parser.add_argument(
     "--sbatch_mode",
     type=str,
-    default="intel-sc3",
+    default="default",
 )
 
 parser.add_argument(
@@ -48,6 +48,9 @@ parser.add_argument(
 args = parser.parse_args()
 print("Run with sbatch jobs")
 os.system("mkdir -p log")
-sbatch_command = f'sbatch -p {args.sbatch_mode} -c {args.cores} -t {args.time}:00:00 --mem={args.mem} --job-name {args.job_name} --output=log/{args.job_name}-%j.o  --error=log/{args.job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="{args.command}"'
+if args.sbatch_mode is 'default':
+    sbatch_command = f'sbatch -c {args.cores} -t {args.time}:00:00 --mem={args.mem} --job-name {args.job_name} --output=log/{args.job_name}-%j.o  --error=log/{args.job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="{args.command}"'
+else:
+    sbatch_command = f'sbatch -p {args.sbatch_mode} -c {args.cores} -t {args.time}:00:00 --mem={args.mem} --job-name {args.job_name} --output=log/{args.job_name}-%j.o  --error=log/{args.job_name}-%j.e --mail-type=TIME_LIMIT_90,FAIL,END --wrap="{args.command}"'
 print(f"submit job:   {sbatch_command}")
 os.system(sbatch_command)

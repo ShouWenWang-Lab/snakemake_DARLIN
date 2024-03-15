@@ -18,7 +18,7 @@ parser.add_argument(
 parser.add_argument(
     "--ref_dir",
     type=str,
-    default="DATA/CARLIN/20210510_CARLIN_allele_bank/LL_G/CARLIN/results_cutoff_override_3/merge_all",
+    default=".",
     help="Dir to allele bank",
 )
 

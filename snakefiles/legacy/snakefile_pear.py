@@ -25,7 +25,7 @@ if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.key
     config['read_cutoff_UMI_override']=config['read_cutoff_override']
     config['read_cutoff_CB_override']=10 
     
-CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
+DARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
     
         
 ##################

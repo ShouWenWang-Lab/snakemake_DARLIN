@@ -29,14 +29,14 @@ if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.key
     config['read_cutoff_UMI_override']=config['read_cutoff_override']
     config['read_cutoff_CB_override']=10 
     
-CARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
+DARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
     
 
 # remove the flag file of the workflow if the sbatch is not actually run to finish
 for sample in SampleList:
-    if not os.path.exists(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis_actually.done'):
-        if os.path.exists(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis.done'):
-            os.remove(f'CARLIN/{CARLIN_sub_dir}/{sample}/CARLIN_analysis.done') 
+    if not os.path.exists(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis_actually.done'):
+        if os.path.exists(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis.done'):
+            os.remove(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis.done') 
         
 ##################
 ## start the rules
@@ -46,7 +46,7 @@ rule all:
         "fastqc_before_pear/multiqc_report.html",
         "fastqc_after_pear/multiqc_report.html",
         expand("fastqc_after_pear/{sample}.trimmed.pear.assembled_fastqc.html",sample=SampleList),
-        expand("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done",sample=SampleList,sub_dir=CARLIN_sub_dir)
+        expand("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done",sample=SampleList,sub_dir=DARLIN_sub_dir)
     
 rule fastqc_before_pear:
     input:
@@ -97,11 +97,11 @@ rule multiqc_after_pear:
         shell(f"bash {script_dir}/run_multiqc.sh fastqc_after_pear")
         
         
-rule CARLIN:
+rule DARLIN:
     input:
         "pear_output/{sample}.trimmed.pear.assembled.fastq"
     output:
-        touch("CARLIN/{sub_dir}/{sample}/CARLIN_analysis.done")
+        touch("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done")
     run:
         input_dir=config['data_dir']+'/pear_output'
         cfg_type=config['cfg_type']
@@ -110,7 +110,7 @@ rule CARLIN:
         CARLIN_memory_factor=config['CARLIN_memory_factor']
         sbatch=config['sbatch']
         CARLIN_max_run_time=config['CARLIN_max_run_time']
-        output_dir=config['data_dir']+f'/CARLIN/{wildcards.sub_dir}'
+        output_dir=config['data_dir']+f'/DARLIN/{wildcards.sub_dir}'
         read_cutoff_override=int(wildcards.sub_dir.split('_')[-1])
         
         file_size = os.path.getsize(f'{input_dir}/{wildcards.sample}.trimmed.pear.assembled.fastq')/1000000000
