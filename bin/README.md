@@ -125,13 +125,13 @@ snakemake -s $code_directory/snakemake_DARLIN/snakefiles/snakefile_get_data.py -
 This command will generate the QC report and process each sample with the CARLIN pipeline:
 
 ```bash
-snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_bulk_DARLIN_Part1.py  --configfile config.yaml --core 10
+snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_matlab_DARLIN_Part1.py  --configfile config.yaml --core 10
 ```
 
 Finally, you may run this command to get an html report across all samples:
 
 ```bash
-snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_bulk_DARLIN_Part2.py --configfile config.yaml --core 5 --ri -R generate_report -R plots 
+snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_matlab_DARLIN_Part2.py --configfile config.yaml --core 5 --ri -R generate_report -R plots 
 ```
 
 The result will show up at the `merge_all` folder as shown in the above image. 
@@ -140,7 +140,7 @@ The result will show up at the `merge_all` folder as shown in the above image.
 
 We also developed our own DARLIN pipeline that works well for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. It is much faster than the CARLIN pipeline written in Matlab, and is written in python so that it is freely available and the Matlab installation is not required. We execute a jupyter notebook (`QC/single_cell_DARLIN-10x.ipynb` or `QC/single_cell_DARLIN-scCamellia.ipynb`) to obtain the results and also quality control plots simultaneously.
 
-To run this, you need to setup a proper environment, which we may call `DARLIN_analysis`. Particulary, it requires our in-house package called `MosaicLineage`.
+To run this, you need to setup a proper environment, which we may call `DARLIN_analysis`. Particulary, it requires our in-house package called `MosaicLineage` as well as `cospar`
 
 ```bash
 code_directory='.' # change it to the directory where you want to put the packages
@@ -180,12 +180,12 @@ read_cutoff_UMI_override : [3,10] # assume to be a list, UMI cutoff is the same 
 CARLIN_memory_factor : 300 # request memory at X times the size of the pear fastq file.
 sbatch : 1 # 1, run sbatch job;  0, run in the interactive mode. 
 CARLIN_max_run_time : 12 # hour
-single_cell_pipeline: # This is an extension, needed only if you run snakefile_single_cell_DARLIN.py
+python_DARLIN_pipeline: # This is an extension, needed only if you run snakefile_single_cell_DARLIN.py
     coarse_grained_readcutoff_floor: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
     distance_relative_threshold: 0.03 # 5% error rate, will be multipled with the sequence length
     read_ratio_threshold: 0.6
     seq_3prime_upper_N: 15
-    output_folder: 'python_DARLIN_output'
+    output_folder: 'python_DARLIN'
     kernel: 'DARLIN_analysis'
 ```
 

@@ -30,12 +30,12 @@ if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.key
     
     
 # parameters
-coarse_grained_readcutoff_floor=config['single_cell_pipeline']['coarse_grained_readcutoff_floor']
-distance_relative_threshold=config['single_cell_pipeline']['distance_relative_threshold']
-read_ratio_threshold=config['single_cell_pipeline']['read_ratio_threshold']
-seq_3prime_upper_N=config['single_cell_pipeline']['seq_3prime_upper_N']
-output_folder=config['single_cell_pipeline']['output_folder']
-kernel=config['single_cell_pipeline']['kernel']
+coarse_grained_readcutoff_floor=config['python_DARLIN_pipeline']['coarse_grained_readcutoff_floor']
+distance_relative_threshold=config['python_DARLIN_pipeline']['distance_relative_threshold']
+read_ratio_threshold=config['python_DARLIN_pipeline']['read_ratio_threshold']
+seq_3prime_upper_N=config['python_DARLIN_pipeline']['seq_3prime_upper_N']
+output_folder=config['python_DARLIN_pipeline']['output_folder']
+kernel=config['python_DARLIN_pipeline']['kernel']
 DARLIN_sub_dir=[output_folder]
 
     
