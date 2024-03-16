@@ -12,7 +12,7 @@ First, make a conda environment:
 kernel_name='snakemake_darlin'
 conda create -n $kernel_name
 conda activate $kernel_name
-#conda install -c conda-forge -c bioconda snakemake fastqc multiqc tree -y
+conda install -c conda-forge -c bioconda snakemake fastqc multiqc tree -y
 pip install --user ipykernel
 pip install jupyterlab umi_tools seaborn papermill biopython
 python -m ipykernel install --user --name=$kernel_name
