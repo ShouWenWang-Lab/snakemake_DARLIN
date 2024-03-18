@@ -101,7 +101,7 @@ rule generate_report:
     run:
         print("----generate report -----")
         Samples=','.join(SampleList)
-        data_dir=os.path.join(config['data_dir'],'CARLIN', wildcards.sub_dir)
+        data_dir=os.path.join(config['data_dir'],'DARLIN', wildcards.sub_dir)
         shell(f"papermill  {QC_dir}/DARLIN_report.ipynb  {data_dir}/merge_all/DARLIN_report.ipynb  -p data_dir {data_dir} -p Samples {Samples}")
         shell(f"jupyter nbconvert --to html {data_dir}/merge_all/DARLIN_report.ipynb")
         
