@@ -220,11 +220,12 @@ A log file for running this test module is available to download at [here](https
 ## Upgrade
 Active changes are being made to the github repository. If you want to incorporate the latest changes, please run
 ```bash
-cd $code_directory/snakemake_DARLIN
+cd $code_directory
+cd snakemake_DARLIN
 git pull
-cd $code_directory/CARLIN_pipeline/Custom_CARLIN 
+cd ../CARLIN_pipeline/Custom_CARLIN 
 git pull
-cd $code_directory/MosaicLineage
+cd ../../MosaicLineage
 git pull
 ```
 
