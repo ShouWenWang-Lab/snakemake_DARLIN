@@ -45,6 +45,7 @@ MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons in
 
 This pipeline also use `fastqc` and `multiqc` to visualize sequence quality. The pipeline should run correctly even without them. But if you want to see the QC results, please have these two commands available in the terminal. 
 
+
 ## Usage
 
 The pipeline assumes that it is being called on a server with SLURM if `sbatch=1` in the config file (see below). If not, you can copy-and-paste the generated command and run it locally.
@@ -125,7 +126,7 @@ and run the snakemake script at the same directory as the `config.yaml` file:
 snakemake -s $code_directory/snakemake_DARLIN/snakefiles/snakefile_get_data.py --configfile config.yaml --core 1
 ```
 
-### CARLIN analsysis
+### Matlab-based DARLIN analsysis for both bulk and single-cell libraries
 
 This command will generate the QC report and process each sample with the CARLIN pipeline:
 
@@ -141,7 +142,7 @@ snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_matl
 
 The result will show up at the `merge_all` folder as shown in the above image. 
 
-### A fast, python pipeline for single-cell libraries 
+### A fast, python-based DARLIN analysis for single-cell libraries 
 
 We also developed a fast, python-based pipeline for processing single-cell DARLIN data.It is much faster than the CARLIN pipeline written in Matlab, and is written in python so that it is freely available and the Matlab installation is not required. This is particularly useful for single-cell libraries with higher amplification heterogeneity, e.g., one cell gets 10K reads, while another cell only has 10 reads. We execute a jupyter notebook (`QC/single_cell_DARLIN-10x.ipynb` or `QC/single_cell_DARLIN-scCamellia.ipynb`) to obtain the results and also quality control plots simultaneously.
 
@@ -210,6 +211,23 @@ To test if the pipeline has been installed correctly, please go to the `test` fo
 ```bash
 bash test.sh
 ```
+
+If everything goes correctly, the expected output for the three test datasets should be like this:
+![image](https://private-user-images.githubusercontent.com/4595786/321483932-1b25562d-d367-49e3-ac9e-02d93c307b79.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTI4MDYyODUsIm5iZiI6MTcxMjgwNTk4NSwicGF0aCI6Ii80NTk1Nzg2LzMyMTQ4MzkzMi0xYjI1NTYyZC1kMzY3LTQ5ZTMtYWM5ZS0wMmQ5M2MzMDdiNzkucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDQxMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDA0MTFUMDMyNjI1WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YzUwOWNhZjY0OTk4NjQ5MGNiZWNiN2VkNjU0NmJmMGI3Y2E2ODA3ZDg4MGE4NjM1ZmE5N2RlYzgxZTYzYWYxYyZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ.ozNQ8fLGMMZTsrdYLtgD5vDgQfAfkbTg8jhUTh0bfTk)
+
+A log file for running this test module is available to download at [here](https://github.com/ShouWenWang-Lab/snakemake_DARLIN/files/14940946/log.txt).
+
+## Upgrade
+Active changes are being made to the github repository. If you want to incorporate the latest changes, please run
+```bash
+cd $code_directory/snakemake_DARLIN
+git pull
+cd $code_directory/CARLIN_pipeline/Custom_CARLIN 
+git pull
+cd $code_directory/MosaicLineage
+git pull
+```
+
 
 ### External links
 - A 30min video about DARLIN project in [Youtube](https://www.youtube.com/watch?v=TywIb_4cPk8) or [Bilibili](https://www.bilibili.com/video/BV1sw411F7hd/?spm_id_from=333.999.0.0&vd_source=88ba2b3e0a84657ca67330d8cba9e18f).
