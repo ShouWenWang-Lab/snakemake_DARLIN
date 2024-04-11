@@ -43,6 +43,8 @@ module load matlab
 
 MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons installed. FastQC and MultiQC should also be available from the command line, otherwise you will not get the QC report (however, you can finish the DARLIN preprocessing with them).
 
+This pipeline also use `fastqc` and `multiqc` to visualize sequence quality. The pipeline should run correctly even without them. But if you want to see the QC results, please have these two commands available in the terminal. 
+
 ## Usage
 
 The pipeline assumes that it is being called on a server with SLURM if `sbatch=1` in the config file (see below). If not, you can copy-and-paste the generated command and run it locally.
