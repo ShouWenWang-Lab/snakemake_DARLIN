@@ -10,9 +10,10 @@ First, make a conda environment:
 
 ```bash
 kernel_name='snakemake_darlin'
-conda create -n $kernel_name
+conda create -n $kernel_name python=3.9 --yes
 conda activate $kernel_name
-conda install -c conda-forge -c bioconda snakemake fastqc multiqc tree -y
+conda install -c conda-forge mamba --yes
+mamba install -c conda-forge -c bioconda  snakemake=7.24.0 --yes
 pip install --user ipykernel
 pip install jupyterlab umi_tools seaborn papermill biopython
 python -m ipykernel install --user --name=$kernel_name
