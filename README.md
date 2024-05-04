@@ -54,7 +54,7 @@ With `sbatch=0`, it should run properly in a normal Linux system without SLURM. 
 
 ### File structure
 
-![image info](https://user-images.githubusercontent.com/4595786/205734971-e4a62308-9d16-4727-9107-36aff168a6d3.png)
+![image info](./images/after_running_pipeline.png)
 
 As indicated in the above example, the `config.yaml` file should be at the root folder of a project, and the fastq data should be at the folder `raw_fastq`.
 
@@ -112,7 +112,7 @@ bs auth # this needs to be done only once for authentification
 bs list project
 ```
 
-![image info](https://user-images.githubusercontent.com/4595786/205739547-7439adf6-90a3-45bc-ac36-71758cef4e6c.png)
+![image info](./images/illumina.png)
 
 Next, select the desired project name and ID. In the above `config.yaml` file, we selected the data from the first entry.
 
@@ -203,8 +203,7 @@ snakemake -s $code_directory/packages/snakemake_DARLIN/snakefiles/snakefile_pyth
 
 The result will show up as a jupyter notebook and a corresponding html report:
 
-![image](https://user-images.githubusercontent.com/4595786/205761409-2f5678c2-51aa-409b-93f1-ab32509a2c74.png)
-
+![image](./images/python_DARLIN.png)
 
 ### Test
 To test if the pipeline has been installed correctly, please go to the `test` folder and run the command
@@ -213,7 +212,7 @@ bash test.sh
 ```
 
 If everything goes correctly, the expected output for the three test datasets should be like this:
-![image](https://private-user-images.githubusercontent.com/4595786/321483932-1b25562d-d367-49e3-ac9e-02d93c307b79.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTI4MDYyODUsIm5iZiI6MTcxMjgwNTk4NSwicGF0aCI6Ii80NTk1Nzg2LzMyMTQ4MzkzMi0xYjI1NTYyZC1kMzY3LTQ5ZTMtYWM5ZS0wMmQ5M2MzMDdiNzkucG5nP1gtQW16LUFsZ29yaXRobT1BV1M0LUhNQUMtU0hBMjU2JlgtQW16LUNyZWRlbnRpYWw9QUtJQVZDT0RZTFNBNTNQUUs0WkElMkYyMDI0MDQxMSUyRnVzLWVhc3QtMSUyRnMzJTJGYXdzNF9yZXF1ZXN0JlgtQW16LURhdGU9MjAyNDA0MTFUMDMyNjI1WiZYLUFtei1FeHBpcmVzPTMwMCZYLUFtei1TaWduYXR1cmU9YzUwOWNhZjY0OTk4NjQ5MGNiZWNiN2VkNjU0NmJmMGI3Y2E2ODA3ZDg4MGE4NjM1ZmE5N2RlYzgxZTYzYWYxYyZYLUFtei1TaWduZWRIZWFkZXJzPWhvc3QmYWN0b3JfaWQ9MCZrZXlfaWQ9MCZyZXBvX2lkPTAifQ.ozNQ8fLGMMZTsrdYLtgD5vDgQfAfkbTg8jhUTh0bfTk)
+![image](./images/test_output.png)
 
 A log file for running this test module is available to download at [here](https://github.com/ShouWenWang-Lab/snakemake_DARLIN/files/14940946/log.txt).
 
