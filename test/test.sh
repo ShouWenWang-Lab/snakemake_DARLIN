@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd bulk_cCARLIN
+cd bulk
 # run matlab-based DARLIN pipeline 
 snakemake -s ../../snakefiles/snakefile_matlab_DARLIN_Part1.py  --configfile config.yaml --core 10 --config sbatch=0 -R DARLIN
 # merge results from all samples (we have only one sample 'test' here. So, there is not much difference)
