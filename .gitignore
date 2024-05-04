@@ -5,12 +5,6 @@
 /**/.snakemake
 *.done
 /**/.DS_Store
-test/bulk_cDARLIN/*
-!test/bulk_cDARLIN/config.yaml
-!test/bulk_cDARLIN/raw_fastq
-test/bulk_TigreDARLIN/*
-!test/bulk_TigreDARLIN/config.yaml
-!test/bulk_TigreDARLIN/raw_fastq
 test/sc-10X/*
 !test/sc-10X/config.yaml
 !test/sc-10X/raw_fastq
@@ -18,9 +12,6 @@ test/scCamellia/*
 !test/scCamellia/config.yaml
 !test/scCamellia/raw_fastq
 *.egg-info
-test/bulk_cCARLIN/*
-!test/bulk_cCARLIN/config.yaml
-!test/bulk_cCARLIN/raw_fastq
-test/bulk_TigreCARLIN/*
-!test/bulk_TigreCARLIN/config.yaml
-!test/bulk_TigreCARLIN/raw_fastq
+test/bulk/*
+!test/bulk/config.yaml
+!test/bulk/raw_fastq
