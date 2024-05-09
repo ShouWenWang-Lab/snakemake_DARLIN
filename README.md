@@ -41,7 +41,7 @@ Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academi
 module load matlab
 ```
 
-MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons installed. FastQC and MultiQC should also be available from the command line, otherwise you will not get the QC report (however, you can finish the DARLIN preprocessing with them).
+MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons installed. FastQC and MultiQC should also be available from the command line, otherwise you will not get the QC report (however, you can finish the DARLIN preprocessing without them).
 
 This pipeline also use `fastqc` and `multiqc` to visualize sequence quality. The pipeline should run correctly even without them. But if you want to see the QC results, please have these two commands available in the terminal. 
 
@@ -156,8 +156,8 @@ conda create -n $kernel_name python=3.8 --yes
 conda activate $kernel_name
 pip install cospar
 pip install --user ipykernel
-pip install pytest black ipywidgets biotite
-pip install pytest-datadir pytest-cov umi_tools toolz jupyterlab pyyaml scikit-bio biopython matplotlib_venn wand gseapy==0.9.13 seaborn==0.11.2 pre-commit scikit-learn==1.1.1 pandas==1.5.3
+pip install pytest black ipywidgets
+pip install pytest-datadir pytest-cov umi_tools toolz jupyterlab pyyaml scikit-bio biopython  wand  seaborn==0.11.2  scikit-learn==1.1.1 pandas==1.5.3
 python -m ipykernel install --user --name=$kernel_name
 pip uninstall cospar # uninstall the old version, and install the latest
 cd $code_directory
@@ -234,7 +234,7 @@ git pull
 
 - [MosaicLineage](https://github.com/ShouWenWang-Lab/MosaicLineage), A (mosaic) collection of python help functions related to lineage tracing data analysis, developed through the DARLIN project.
 
-- [Notebooks](https://github.com/ShouWenWang-Lab/DARLIN_notebooks) to reproduce Figure 4 and Figure 5 in our paper. It also illustrates how to use the MosaicLineage package there.
+- [Notebooks](https://github.com/ShouWenWang-Lab/DARLIN_tutorial) to reproduce Figure 4 and Figure 5 in our paper. It also illustrates how to use the MosaicLineage package there.
 
 - [Raw and intermediate data for these notebooks](https://zenodo.org/records/8422061). To download all raw or processed data, please go to [GEO: GSE222486](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE222486)
 
