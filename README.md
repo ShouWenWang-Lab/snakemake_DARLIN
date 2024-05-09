@@ -228,6 +228,9 @@ cd ../../MosaicLineage
 git pull
 ```
 
+## Reference
+
+L. Li, S. Bowling, S. E. McGeary, Q. Yu, B. Lemke, K. Alcedo, Y. Jia, X. Liu, M. Ferreira, A. M. Klein, S.-W. Wang*, F. D. Camargo*, [A mouse model with high clonal barcode diversity for joint lineage, transcriptomic, and epigenomic profiling in single cells, Cell (2023).](https://doi.org/10.1016/j.cell.2023.09.019) [* corresponding authors]
 
 ## External links
 - A 30min video about DARLIN project in [Youtube](https://www.youtube.com/watch?v=TywIb_4cPk8) or [Bilibili](https://www.bilibili.com/video/BV1sw411F7hd/?spm_id_from=333.999.0.0&vd_source=88ba2b3e0a84657ca67330d8cba9e18f).
@@ -239,3 +242,4 @@ git pull
 - [Raw and intermediate data for these notebooks](https://zenodo.org/records/8422061). To download all raw or processed data, please go to [GEO: GSE222486](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE222486)
 
 - [Shou-Wen Wang Lab website](https://www.shouwenwang-lab.com/)
+
