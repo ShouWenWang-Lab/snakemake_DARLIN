@@ -239,7 +239,7 @@ L. Li, S. Bowling, S. E. McGeary, Q. Yu, B. Lemke, K. Alcedo, Y. Jia, X. Liu, M.
 
 - [Notebooks](https://github.com/ShouWenWang-Lab/DARLIN_tutorial) to reproduce Figure 4 and Figure 5 in our paper. It also illustrates how to use the MosaicLineage package there.
 
-- [Raw and intermediate data for these notebooks](https://zenodo.org/records/8422061). To download all raw or processed data, please go to [GEO: GSE222486](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE222486)
+- [Raw and intermediate data for these notebooks](https://zenodo.org/records/11929508). To download all raw or processed data, please go to [GEO: GSE222486](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE222486)
 
 - [Shou-Wen Wang Lab website](https://www.shouwenwang-lab.com/)
 
