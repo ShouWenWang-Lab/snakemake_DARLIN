@@ -35,13 +35,21 @@ cd CARLIN_pipeline
 git clone https://github.com/ShouWenWang-Lab/Custom_CARLIN --depth=1
 ```
 
-Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academic/) and MATLAB. MATLAB should be available in the command line interface. In an HPC environment, MATLAB can be loaded with the command:
+Finally, you need to install [pear](https://www.h-its.org/downloads/pear-academic/) and MATLAB. It is often needed to install pear on a HPC locally so that no root permission is needed. To do so, you can use `./configure --prefix /local/directory` to install it locally where you do have access. Below is an example script for installing pear on HPC locally.
+```bash
+cd pear_installation_folder
+./configure --prefix ~ # install at the local home directory
+make
+make install
+```
 
+
+MATLAB should be available in the command line interface. In an HPC environment, MATLAB can be loaded with the command:
 ```bash
 module load matlab
 ```
-
 MATLAB should have Bioinformatics Toolbox and Image Processing Toolbox addons installed. FastQC and MultiQC should also be available from the command line, otherwise you will not get the QC report (however, you can finish the DARLIN preprocessing without them).
+
 
 This pipeline also use `fastqc` and `multiqc` to visualize sequence quality. The pipeline should run correctly even without them. But if you want to see the QC results, please have these two commands available in the terminal. 
 
