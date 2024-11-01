@@ -56,15 +56,18 @@ rule all:
     input: 
         expand(f"DARLIN/{python_sub_dir}/{{sample}}/final.done",sample=SampleList)
 
-rule gen_10xv3:
+rule gen_slim_fastq:
     input:
         called_bc_file=f"DARLIN/{python_sub_dir}/{{sample}}/called_barcodes_by_SW_method.csv"
     output:
         fq_R1="slim_fastq/{sample}_L001_R1_001.fastq.gz",
         fq_R2="slim_fastq/{sample}_L001_R2_001.fastq.gz"
     run:
-        command=f"papermill {QC_dir}/extra-gen_10xv3_fastq.ipynb -k {kernel} DARLIN/{python_sub_dir}/{wildcards.sample}/extra-gen_10xv3_fastq.ipynb -p called_bc_file {input.called_bc_file} -p locus {template} -p R1_file {output.fq_R1} -p R2_file {output.fq_R2}"
         job_name=f'Car_{wildcards.sample}'
+        if cfg_type=='sc10xV3':
+            command=f"papermill {QC_dir}/extra-gen_10xv3_fastq.ipynb -k {kernel} DARLIN/{python_sub_dir}/{wildcards.sample}/extra-gen_10xv3_fastq.ipynb -p called_bc_file {input.called_bc_file} -p locus {template} -p R1_file {output.fq_R1} -p R2_file {output.fq_R2}"
+        elif cfg_type=='scCamellia':
+            command=f"papermill {QC_dir}/extra-gen_scCamellia_fastq.ipynb -k {kernel} DARLIN/{python_sub_dir}/{wildcards.sample}/extra-gen_scCamellia_fastq.ipynb -p called_bc_file {input.called_bc_file} -p locus {template} -p R1_file {output.fq_R1} -p R2_file {output.fq_R2}"
         if config['sbatch']==0:
             print("Run on terminal directly")
             os.system(command)

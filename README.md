@@ -262,6 +262,32 @@ The result will show up as a jupyter notebook and a corresponding html report:
 
 ![](./images/calling_allele.png)
 
+#### For scCamellia
+
+Everything is the same as in 10xv3, except for the changes made to the parameters in the `config-CA.yaml` file:
+
+```yaml
+project_name : 'scCamellia_lineage'
+project_ID : '290654424'
+SampleList: ['241012_Gr_CA', '241012_Mon_CA']
+cfg_type : 'scCamellia' # used_cfg_type: {BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scCamellia,sc10xV3};  # our bulk DNA and RNA protocol results in the same sequence structure, and share common cfg file
+template : 'cCARLIN' # short_primer_set: {Tigre_2022_v2, Rosa_v2, cCARLIN}, long_primer_set: {Tigre_2022,Rosa,cCARLIN}
+read_cutoff_UMI_override : [1] # assume to be a list, UMI cutoff is the same as CB cutoff for single-cell protocol
+CARLIN_memory_factor : 300 # request memory at X times the size of the pear fastq file.
+sbatch : 0 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
+CARLIN_max_run_time : 12 # hour
+python_DARLIN_pipeline:
+    coarse_grained_readcutoff_floor: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
+    distance_relative_threshold: 0.03 # 5% error rate, will be multipled with the sequence length
+    read_ratio_threshold: 0.6
+    seq_3prime_upper_N: 15
+    output_folder: 'python_DARLIN'
+    kernel: 'DARLIN_analysis'
+
+```
+
+
+
 
 
 ## Upgrade
