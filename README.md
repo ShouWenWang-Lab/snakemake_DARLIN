@@ -92,13 +92,13 @@ CARLIN_max_run_time : 12 # hour
 `SampleList` should be the list of samples that you want to analyze. 
 
 `cfg_type` should match the protocol of the experiment. Some of the provided protocols include:
- 
+
  * `BulkRNA_Tigre_14UMI`: Bulk CARLIN library with Tigre locus, with a UMI of 14bp
  * `BulkRNA_Rosa_14UMI`:  Bulk CARLIN library with Rosa locus, with a UMI of 14bp
  * `BulkRNA_12UMI`: Bulk CARLIN library with Col1a1 locus, with a UMI of 12bp
  * `scCamellia`: Single-cell CARLIN library using the scCamellia-seq protocol
  * `sc10xV3`: Single-cell CARLIN library using the 10X v3 protocol
- 
+
  `template` should match the primer set used. We have template corresponding to shorter primers in TC and RC: {`Tigre_2022_v2`, `Rosa_v2`}, and longer primers: {`Tigre_2022`, `Rosa`}. For Col1a1 locus, we only have a single primer set, corresponding to tempalte `cCARLIN`.
 
 `read_cutoff_UMI_override`: minimum number of reads needed to support a UMI (bulk library) or a cell barcode (single cell library). It should be a list of read cutoff like [3,10].
@@ -224,7 +224,48 @@ If everything goes correctly, the expected output for the three test datasets sh
 
 A log file for running this test module is available to download at [here](https://github.com/ShouWenWang-Lab/snakemake_DARLIN/files/14940946/log.txt).
 
+### DARLIN analysis together with allele information
+
+#### For 10x
+
+Parameters in the `config-CA.yaml` file:
+
+```yaml
+project_name : 'LL835_10X_3A'
+project_ID : '359277919'
+SampleList : ['LL837-LF-CA_S1'] #DO NOT include 1_S*, it will have few reads, affect the output ['test_RC'] #
+cfg_type : 'sc10xV3'  # used_cfg_type: {BulkRNA_Tigre_14UMI, BulkRNA_Rosa_14UMI, BulkRNA_12UMI, scCamellia,sc10xV3};  # our bulk DNA and RNA protocol results in the same sequence structure, and share common cfg file
+template : 'cCARLIN' # short_primer_set: {Tigre_2022_v2, Rosa_v2, cCARLIN}, long_primer_set: {Tigre_2022,Rosa,cCARLIN}
+read_cutoff_UMI_override : [1] # assume to be a list, UMI cutoff is the same as CB cutoff for single-cell protocol
+CARLIN_memory_factor : 300 # request memory at X times the size of the pear fastq file.
+sbatch : 0 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
+CARLIN_max_run_time : 6 # hour
+python_DARLIN_pipeline:
+    coarse_grained_readcutoff_floor: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
+    distance_relative_threshold: 0.03 # 5% error rate, will be multipled with the sequence length
+    read_ratio_threshold: 0.6
+    seq_3prime_upper_N: 15
+    output_folder: 'python_DARLIN'
+    kernel: 'DARLIN_analysis'
+```
+
+Finally, run:
+
+```bash
+# Extracting and denoising DARLIN sequence
+snakemake -s ../../snakefiles/snakefile_python_DARLIN.py --configfile config-CA.yaml --core 5 --config sbatch=0 -R DARLIN
+# Calling allele via Matlab-based DARLIN pipeline (fast)
+snakemake -s ../../snakefiles/snakefile_call_mut.py --configfile config-CA.yaml --core 5 --config sbatch=0
+```
+
+The result will show up as a jupyter notebook and a corresponding html report:
+
+![](./images/calling_allele.png)
+
+
+
 ## Upgrade
+
 Active changes are being made to the github repository. If you want to incorporate the latest changes, please run
 ```bash
 cd $code_directory
@@ -235,6 +276,8 @@ git pull
 cd ../../MosaicLineage
 git pull
 ```
+
+
 
 ## Reference
 
