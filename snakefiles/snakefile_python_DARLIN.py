@@ -34,7 +34,7 @@ coarse_grained_readcutoff_floor=config['python_DARLIN_pipeline']['coarse_grained
 distance_relative_threshold=config['python_DARLIN_pipeline']['distance_relative_threshold']
 read_ratio_threshold=config['python_DARLIN_pipeline']['read_ratio_threshold']
 seq_3prime_upper_N=config['python_DARLIN_pipeline']['seq_3prime_upper_N']
-output_folder=config['python_DARLIN_pipeline']['output_folder']
+output_folder=config['template'] +'_'+ config['python_DARLIN_pipeline']['output_folder']
 kernel=config['python_DARLIN_pipeline']['kernel']
 DARLIN_sub_dir=[output_folder]
 
@@ -54,18 +54,19 @@ rule all:
 
 rule DARLIN:        
     input:
-        fq_R1="raw_fastq/{sample}_L001_R1_001.fastq.gz",
-        fq_R2="raw_fastq/{sample}_L001_R2_001.fastq.gz"
+        fq_R1=config['raw_fastq_dir'] + "/{sample}/{sample}_R1.fastq.gz",
+        fq_R2=config['raw_fastq_dir'] + "/{sample}/{sample}_R2.fastq.gz"
     output:
         touch("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done")
     run:
-        output_dir=config['data_dir']+f'/DARLIN/{wildcards.sub_dir}'
+        output_dir=config['data_dir']+'/DARLIN/'+f'{wildcards.sub_dir}'
         
         if (cfg_type not in ['scCamellia','sc10xV3']):
             raise ValueError("This pipeline is only intended for scCamellia or sc10xV3")
             
         else:
-            input_dir=config['data_dir']+'/raw_fastq'
+            # input_dir=config['data_dir']+'/raw_fastq'
+            input_dir=os.path.normpath(os.path.join(config['data_dir'], config['raw_fastq_dir']))
             
         print(input_dir)
         template=config['template']

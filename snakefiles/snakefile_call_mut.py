@@ -37,15 +37,15 @@ if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.key
     config['read_cutoff_UMI_override']=config['read_cutoff_override']
 
 # parameters
-python_sub_dir=config['python_DARLIN_pipeline']['output_folder']
+python_sub_dir=config['template'] + '_' + config['python_DARLIN_pipeline']['output_folder']
 kernel=config['python_DARLIN_pipeline']['kernel']
 template=config['template']
 
 # remove the flag file of the workflow if the sbatch is not actually run to finish
 for sample in SampleList:
-    if not os.path.exists(f'DARLIN/results_cutoff_override_1/{sample}/DARLIN_analysis_actually.done'):
-        if os.path.exists(f'DARLIN/results_cutoff_override_1/{sample}/DARLIN_analysis.done'):
-            os.remove(f'DARLIN/results_cutoff_override_1/{sample}/DARLIN_analysis.done') 
+    if not os.path.exists('DARLIN/'+config['template']+f'_cutoff_override_1/{sample}/DARLIN_analysis_actually.done'):
+        if os.path.exists('DARLIN/'+config['template']+f'results_cutoff_override_1/{sample}/DARLIN_analysis.done'):
+            os.remove('DARLIN/'+config['template']+f'results_cutoff_override_1/{sample}/DARLIN_analysis.done') 
 
 os.path.exists('slim_fastq') or os.makedirs('slim_fastq')
 
@@ -60,8 +60,8 @@ rule gen_slim_fastq:
     input:
         called_bc_file=f"DARLIN/{python_sub_dir}/{{sample}}/called_barcodes_by_SW_method.csv"
     output:
-        fq_R1="slim_fastq/{sample}_L001_R1_001.fastq.gz",
-        fq_R2="slim_fastq/{sample}_L001_R2_001.fastq.gz"
+        fq_R1="slim_fastq_"+config['template']+"/{sample}_R1.fastq.gz",
+        fq_R2="slim_fastq_"+config['template']+"/{sample}_R2.fastq.gz"
     run:
         job_name=f'Car_{wildcards.sample}'
         if cfg_type=='sc10xV3':
@@ -77,16 +77,18 @@ rule gen_slim_fastq:
 
 rule DARLIN:        
     input:
-        fq_R1="slim_fastq/{sample}_L001_R1_001.fastq.gz",
-        fq_R2="slim_fastq/{sample}_L001_R2_001.fastq.gz"
+        # fq_R1="slim_fastq/{sample}_L001_R1_001.fastq.gz",
+        # fq_R2="slim_fastq/{sample}_L001_R2_001.fastq.gz"
+        fq_R1="slim_fastq_"+config['template']+"/{sample}_R1.fastq.gz",
+        fq_R2="slim_fastq_"+config['template']+"/{sample}_R2.fastq.gz"
     output:
-        "DARLIN/results_cutoff_override_1/{sample}/Actaul_CARLIN_seq.txt",
-        "DARLIN/results_cutoff_override_1/{sample}/AlleleAnnotations.txt"
+        "DARLIN/"+config['template']+"_cutoff_override_1/{sample}/Actaul_CARLIN_seq.txt",
+        "DARLIN/"+config['template']+"_cutoff_override_1/{sample}/AlleleAnnotations.txt"
     run:
-        output_dir=config['data_dir']+f'/DARLIN/results_cutoff_override_1'
-        input_dir=config['data_dir']+'/slim_fastq'
+        output_dir=config['data_dir']+'/DARLIN/'+config['template']+'_cutoff_override_1'
+        input_dir=config['data_dir']+'/slim_fastq_'+config['template']
         print(input_dir)
-        
+
         CARLIN_memory_factor=config['CARLIN_memory_factor']
         sbatch=config['sbatch']
         CARLIN_max_run_time=config['CARLIN_max_run_time']
@@ -119,14 +121,14 @@ rule DARLIN:
 
 rule join_results:
     input:
-        "DARLIN/results_cutoff_override_1/{sample}/Actaul_CARLIN_seq.txt",
-        "DARLIN/results_cutoff_override_1/{sample}/AlleleAnnotations.txt"
+        "DARLIN/"+config['template']+"_cutoff_override_1/{sample}/Actaul_CARLIN_seq.txt",
+        "DARLIN/"+config['template']+"_cutoff_override_1/{sample}/AlleleAnnotations.txt"
     output:
         touch(f"DARLIN/{python_sub_dir}/{{sample}}/final.done")
     run:
         called_bc_file = f"DARLIN/{python_sub_dir}/{wildcards.sample}/called_barcodes_by_SW_method.csv"
-        carlin_seq_file = f"DARLIN/results_cutoff_override_1/{wildcards.sample}/Actaul_CARLIN_seq.txt"
-        allele_annot_file = f"DARLIN/results_cutoff_override_1/{wildcards.sample}/AlleleAnnotations.txt"
+        carlin_seq_file = "DARLIN/"+config['template']+f"_cutoff_override_1/{wildcards.sample}/Actaul_CARLIN_seq.txt"
+        allele_annot_file = "DARLIN/"+config['template']+f"_cutoff_override_1/{wildcards.sample}/AlleleAnnotations.txt"
         final_file = f"DARLIN/{python_sub_dir}/{wildcards.sample}/called_barcodes_by_SW_method_allele.csv"
         command_1=f"python {script_dir}/extra-join_results.py {called_bc_file} {carlin_seq_file} {allele_annot_file} {final_file}"
         combined_command=f"{command_1}"
