@@ -195,7 +195,7 @@ CARLIN_memory_factor : 300 # request memory at X times the size of the pear fast
 sbatch : 1 # 1, run sbatch job;  0, run in the interactive mode. 
 CARLIN_max_run_time : 12 # hour
 python_DARLIN_pipeline: # This is an extension, needed only if you run snakefile_single_cell_DARLIN.py
-    coarse_grained_readcutoff_floor: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
+    min_reads_per_allele_group: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
     distance_relative_threshold: 0.03 # 5% error rate, will be multipled with the sequence length
     read_ratio_threshold: 0.6
     seq_3prime_upper_N: 15
@@ -241,7 +241,7 @@ CARLIN_memory_factor : 300 # request memory at X times the size of the pear fast
 sbatch : 0 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
 CARLIN_max_run_time : 6 # hour
 python_DARLIN_pipeline:
-    coarse_grained_readcutoff_floor: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
+    min_reads_per_allele_group: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
     distance_relative_threshold: 0.03 # 5% error rate, will be multipled with the sequence length
     read_ratio_threshold: 0.6
     seq_3prime_upper_N: 15
@@ -277,7 +277,7 @@ CARLIN_memory_factor : 300 # request memory at X times the size of the pear fast
 sbatch : 0 # 1, run sbatch job;  0, run in the interactive mode. If set to be 1, expect error from file latency, as the sbatch job would take a while to finish
 CARLIN_max_run_time : 12 # hour
 python_DARLIN_pipeline:
-    coarse_grained_readcutoff_floor: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
+    min_reads_per_allele_group: 5 # the lower bound of the later read count filtering, after denoising, and re-group reads. 
     distance_relative_threshold: 0.03 # 5% error rate, will be multipled with the sequence length
     read_ratio_threshold: 0.6
     seq_3prime_upper_N: 15
