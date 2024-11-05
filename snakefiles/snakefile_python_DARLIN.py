@@ -35,10 +35,14 @@ min_reads_per_allele_group=config['python_DARLIN_pipeline']['min_reads_per_allel
 distance_relative_threshold=config['python_DARLIN_pipeline']['distance_relative_threshold']
 read_ratio_threshold=config['python_DARLIN_pipeline']['read_ratio_threshold']
 seq_3prime_upper_N=config['python_DARLIN_pipeline']['seq_3prime_upper_N']
-output_folder=config['template'] +'_'+ config['python_DARLIN_pipeline']['output_folder']
+output_folder= config['python_DARLIN_pipeline']['output_folder']
 kernel=config['python_DARLIN_pipeline']['kernel']
 DARLIN_sub_dir=[f'{template}_{output_folder}']
 
+if 'raw_fastq_dir' in config.keys():
+    raw_fastq_dir=config['raw_fastq_dir']
+else:
+    raw_fastq_dir='../raw_fastq'
     
 # remove the flag file of the workflow if the sbatch is not actually run to finish
 for sample in SampleList:
@@ -55,8 +59,8 @@ rule all:
 
 rule DARLIN:        
     input:
-        fq_R1=config['raw_fastq_dir'] + "/{sample}/{sample}_R1.fastq.gz",
-        fq_R2=config['raw_fastq_dir'] + "/{sample}/{sample}_R2.fastq.gz"
+        fq_R1=raw_fastq_dir + "/{sample}/{sample}_R1.fastq.gz",
+        fq_R2=raw_fastq_dir + "/{sample}/{sample}_R2.fastq.gz"
     output:
         touch("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done")
     run:
@@ -85,7 +89,7 @@ rule DARLIN:
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
         print("----generate report -----")
-        data_dir=config['data_dir']
+        data_dir=config['data_dir']+f'/{raw_fastq_dir}'
         
         if cfg_type=='scCamellia':
             command=f"""

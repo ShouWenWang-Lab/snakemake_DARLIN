@@ -52,7 +52,6 @@ rule all:
         expand("DARLIN/{sub_dir}/merge_all/DARLIN_report.html",sub_dir=DARLIN_sub_dir),
         
         
-
 rule plots:
     output:
         "DARLIN/{sub_dir}/merge_all/refined_results.csv"
