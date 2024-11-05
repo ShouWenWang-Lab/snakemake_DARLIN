@@ -12,8 +12,7 @@ config['data_dir']=str(os.getcwd())
 ## preprocessing
 ################## 
 
-CARLIN_dir=hf.update_CARLIN_dir(CARLIN_dir,config['template'])
-print("Updated CARLIN_dir:"+ str(CARLIN_dir))
+
 cfg_type=config['cfg_type']
 template=config['template']
 
