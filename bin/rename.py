@@ -1,64 +1,74 @@
 import os
-from pathlib import Path
-import os
-import pandas as pd
-import argparse
-from os import listdir
-from os.path import isfile, join
-# parse cmd line arguments
-parser = argparse.ArgumentParser(description="rename files")
+import fnmatch
+import shutil
 
-######
-# Warining: the data_path should be at the path/to/raw_fastq
-# We assume that under raw_fastq, there are a list fo sample folder
-# under each sample folder there will be R1 and R2 files
-# we will rename files
+##########
+# you can run this script after you downloaded new data:
+# 
+# the folder directory structure should  be as follows:
+# 20240101_DARLIN_Mon_Gr_XXX
+#     |
+#     |___ Data
+#         |___Gr_A1
+#             |___Gr_A1_R1.fq.gz
+#             |___Gr_A1_R2.fq.gz
+# or
+# 20240101_DARLIN_Mon_Gr_XXX
+#     |
+#     |___ raw_fastq
+#         |___Gr_A1
+#             |___Gr_A1_R1.fq.gz
+#             |___Gr_A1_R2.fq.gz
 
-# To put them at the level of raw_fastq, and remove the folders
-#         
-    # os.system(f'mv */*.fastq.gz temp_dir; rm -r {sample}')    
-    # os.system('mv temp_dir/* .; rm -r temp_dir')
-######
-
-
-
-parser.add_argument(
-    "--data_path",
-    type=str,
-    default=".",
-    help="Path/to/raw_fastq",
-)
-parser.add_argument(
-    "--suffix",
-    type=str,
-    default=".fq.gz",
-    help="suffix of the file",
-)
+# run rename script in the folder 20240101_DARLIN_Mon_Gr_XXX:
+# cd 20240101_DARLIN_Mon_Gr_XXX then run this rename script
+##########
 
 
-args=parser.parse_args()
+# get files
+def find_files(directory, pattern):
+    matched_files = []
+    for root, dirnames, filenames in os.walk(directory):
+        for filename in fnmatch.filter(filenames, pattern):
+            matched_files.append(os.path.join(root, filename))
+    matched_files = [item for item in matched_files if 'checkpoint' not in item]
+    return matched_files
 
-args.data_path=os.path.abspath(args.data_path)
-all_files = sorted(
-    Path(args.data_path).glob(
-        os.path.join(
-            "*",
-            f"*{args.suffix}",
-        )
-    )
-)
+def process_format(pattern, remove_str, replace_str, process_folders):
+    files = find_files(cwd, pattern)
+
+    if len(files):
+        for item in files:
+            file_dir = os.path.dirname(item)
+            file_basename = os.path.basename(item)
+            filter_name = file_basename.replace(remove_str, replace_str)
+            shutil.move(item, os.path.join(file_dir,filter_name))
+
+        if process_folders:
+            folders = set(os.path.dirname(item) for item in files)
+            for item in folders:
+                filter_name = item.replace('-', '_')
+                shutil.move(item, filter_name)
+
+    # rename folder: Data -> raw_astq
+    if os.path.exists(os.path.join(cwd, 'Data')):
+        shutil.move(os.path.join(cwd, 'Data'), os.path.join(cwd, 'raw_fastq'))
+
+def main(cwd):
+    patterns = ['*.fq.gz', '*.fastq.gz', '*.fastq.gz', '*.fastq.gz']
+    remove_strs = ['fq.gz', '-', '_L001', '_001']
+    replace_strs = ['fastq.gz', '_', '', '']
 
 
-os.chdir(args.data_path)
-os.system(f'mkdir -p temp_dir')
-print(f'Current path: {args.data_path}')
-for file in all_files:
-    print(file)
-    file=str(file)
-    print(file)
-    sample=file.split('/')[-2]
-    print(f'Sample: {sample}')
-    if (f'_1{args.suffix}' in file) or (f'_R1{args.suffix}' in file):
-        os.system(f'mv {file} {sample}/{sample}_L001_R1_001.fastq.gz')
-    if (f'_2{args.suffix}' in file) or (f'_R2{args.suffix}' in file):
-        os.system(f'mv {file} {sample}/{sample}_L001_R2_001.fastq.gz')
+    for remove_str in remove_strs:
+        process_folders = False
+        index = remove_strs.index(remove_str)
+        pattern = patterns[index]
+        replace_str = replace_strs[index]
+        if index == len(patterns)-1:
+            process_folders = True
+        process_format(pattern, remove_str, replace_str, process_folders)
+
+if __name__ == '__main__':
+    cwd = os.getcwd()
+    main(cwd)
