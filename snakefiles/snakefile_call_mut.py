@@ -47,7 +47,6 @@ for sample in SampleList:
         if os.path.exists('DARLIN/'+config['template']+f'results_cutoff_override_1/{sample}/DARLIN_analysis.done'):
             os.remove('DARLIN/'+config['template']+f'results_cutoff_override_1/{sample}/DARLIN_analysis.done') 
 
-os.path.exists('slim_fastq') or os.makedirs('slim_fastq')
 
 ##################
 ## start the rules
@@ -60,8 +59,8 @@ rule gen_slim_fastq:
     input:
         called_bc_file=f"DARLIN/{python_sub_dir}/{{sample}}/called_barcodes_by_SW_method.csv"
     output:
-        fq_R1="slim_fastq_"+config['template']+"/{sample}_R1.fastq.gz",
-        fq_R2="slim_fastq_"+config['template']+"/{sample}_R2.fastq.gz"
+        fq_R1="slim_fastq_"+config['template']+"/{sample}_L001_R1_001.fastq.gz",
+        fq_R2="slim_fastq_"+config['template']+"/{sample}_L001_R2_001.fastq.gz"
     run:
         job_name=f'Car_{wildcards.sample}'
         if cfg_type=='sc10xV3':
@@ -79,8 +78,8 @@ rule DARLIN:
     input:
         # fq_R1="slim_fastq/{sample}_L001_R1_001.fastq.gz",
         # fq_R2="slim_fastq/{sample}_L001_R2_001.fastq.gz"
-        fq_R1="slim_fastq_"+config['template']+"/{sample}_R1.fastq.gz",
-        fq_R2="slim_fastq_"+config['template']+"/{sample}_R2.fastq.gz"
+        fq_R1="slim_fastq_"+config['template']+"/{sample}_L001_R1_001.fastq.gz",
+        fq_R2="slim_fastq_"+config['template']+"/{sample}_L001_R2_001.fastq.gz"
     output:
         "DARLIN/"+config['template']+"_cutoff_override_1/{sample}/Actaul_CARLIN_seq.txt",
         "DARLIN/"+config['template']+"_cutoff_override_1/{sample}/AlleleAnnotations.txt"
