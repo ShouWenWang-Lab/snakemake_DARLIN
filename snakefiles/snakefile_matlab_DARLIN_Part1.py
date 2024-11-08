@@ -31,14 +31,17 @@ if len(config['SampleList'])==0:
 else:
     SampleList=config['SampleList']
 
-    
+
 # this is to make the pipeline compatible with earlier bulk config files
 if cfg_type.startswith('Bulk') and ('read_cutoff_UMI_override' not in config.keys()) and ('read_cutoff_override' in config.keys()):
     config['read_cutoff_UMI_override']=config['read_cutoff_override']
-    
-DARLIN_sub_dir=[f"results_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
 
-    
+DARLIN_sub_dir=[config['template']+'_'+f"_cutoff_override_{xx}" for xx in config['read_cutoff_UMI_override']]
+
+if 'raw_fastq_dir' in config.keys():
+    raw_fastq_dir=config['raw_fastq_dir']
+else:
+    raw_fastq_dir='../raw_fastq'
 
 # remove the flag file of the workflow if the sbatch is not actually run to finish
 for sample in SampleList:
@@ -55,8 +58,8 @@ rule all:
 
 rule DARLIN:        
     input:
-        fq_R1="raw_fastq/{sample}_L001_R1_001.fastq.gz",
-        fq_R2="raw_fastq/{sample}_L001_R2_001.fastq.gz"
+        fq_R1=raw_fastq_dir + "/{sample}/{sample}_R1.fastq.gz",
+        fq_R2=raw_fastq_dir + "/{sample}/{sample}_R2.fastq.gz",
     output:
         touch("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done")
     run:
@@ -109,7 +112,7 @@ rule DARLIN:
             requested_memory=250 # do not request more than 200G memory
         print(f"{wildcards.sample}:   Requested memory {requested_memory} G")
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
-        
+
         # do not run sbatch within this command
         command_4=f"bash {script_dir}/run_CARLIN.sh {CARLIN_dir} {input_dir} {output_dir} {wildcards.sample} {cfg_type} {template} {read_cutoff_UMI_override} {read_cutoff_CB_override} {requested_memory} {0} {CARLIN_max_run_time}"
 
