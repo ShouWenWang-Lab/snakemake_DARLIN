@@ -49,6 +49,8 @@ def find_best_match(seq_listA, seq_listB):
                     best_match = seqA
         if best_match is not None:
             best_matches[seqB] = best_match
+        else:
+            best_matches[seqB] = seqB # this leads to NA in allele info, but is needed for the pipeline to run to finsh
     return best_matches
 
 # 示例用法
