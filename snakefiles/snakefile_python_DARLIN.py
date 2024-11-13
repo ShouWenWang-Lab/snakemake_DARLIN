@@ -14,7 +14,9 @@ config['data_dir']=str(os.getcwd())
 
 
 cfg_type=config['cfg_type']
-template=config['template']
+template_list=config['template']
+if type(template_list) != list:
+    template_list=[template_list]
 
 if len(config['SampleList'])==0: 
     df=pd.read_csv('raw_fastq/sample_info.csv')
@@ -34,36 +36,30 @@ min_reads_per_allele_group=config['python_DARLIN_pipeline']['min_reads_per_allel
 distance_relative_threshold=config['python_DARLIN_pipeline']['distance_relative_threshold']
 read_ratio_threshold=config['python_DARLIN_pipeline']['read_ratio_threshold']
 seq_3prime_upper_N=config['python_DARLIN_pipeline']['seq_3prime_upper_N']
-output_folder= config['python_DARLIN_pipeline']['output_folder']
 kernel=config['python_DARLIN_pipeline']['kernel']
-DARLIN_sub_dir=[f'{template}_{output_folder}']
+python_sub_dir=config['python_DARLIN_pipeline']['output_folder']
 
 if 'raw_fastq_dir' in config.keys():
     raw_fastq_dir=config['raw_fastq_dir']
 else:
     raw_fastq_dir='../raw_fastq'
     
-# remove the flag file of the workflow if the sbatch is not actually run to finish
-for sample in SampleList:
-    if not os.path.exists(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis_actually.done'):
-        if os.path.exists(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis.done'):
-            os.remove(f'DARLIN/{DARLIN_sub_dir}/{sample}/DARLIN_analysis.done') 
         
 ##################
 ## start the rules
 ################## 
 rule all:
     input: 
-        expand("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done",sample=SampleList,sub_dir=DARLIN_sub_dir)
+        expand(f"DARLIN/{{template}}_{python_sub_dir}/{{sample}}/DARLIN_analysis.done",sample=SampleList,template=template_list)
 
 rule DARLIN:        
     input:
         fq_R1=raw_fastq_dir + "/{sample}/{sample}_R1.fastq.gz",
         fq_R2=raw_fastq_dir + "/{sample}/{sample}_R2.fastq.gz"
     output:
-        touch("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done")
+        touch(f"DARLIN/{{template}}_{python_sub_dir}/{{sample}}/DARLIN_analysis.done")
     run:
-        output_dir=config['data_dir']+'/DARLIN/'+f'{wildcards.sub_dir}'
+        output_dir=config['data_dir']+f'/DARLIN/{wildcards.template}_{python_sub_dir}'
         
         if (cfg_type not in ['scCamellia','sc10xV3']):
             raise ValueError("This pipeline is only intended for scCamellia or sc10xV3")
@@ -73,36 +69,35 @@ rule DARLIN:
             input_dir=os.path.normpath(os.path.join(config['data_dir'], config['raw_fastq_dir']))
             
         print(input_dir)
-        template=config['template']
         CARLIN_memory_factor=config['CARLIN_memory_factor']
         sbatch=config['sbatch']
         CARLIN_max_run_time=config['CARLIN_max_run_time']
         file_size = os.path.getsize(f'{input.fq_R1}')*5/1000000000
         print(f"{wildcards.sample}:   FileSize {file_size} G")
         requested_memory=int(file_size*CARLIN_memory_factor)
-        if requested_memory<20:
-            requested_memory=20 # at least request 20G memory
+        if requested_memory<5:
+            requested_memory=5 # at least request 20G memory
         if requested_memory>250:
             requested_memory=250 # do not request more than 200G memory
         print(f"{wildcards.sample}:   Requested memory {requested_memory} G")
         os.makedirs(f'{output_dir}/{wildcards.sample}',exist_ok=True)
         
         print("----generate report -----")
-        data_dir=config['data_dir']+f'/{raw_fastq_dir}'
+        data_dir=config['data_dir']+f'/{raw_fastq_dir}/{wildcards.sample}'
         
         if cfg_type=='scCamellia':
             command=f"""
-            papermill  {QC_dir}/single_cell_DARLIN-scCamellia.ipynb -k {kernel} {output_dir}/{wildcards.sample}/single_cell_DARLIN-scCamellia.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p ref_dir {ref_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p min_reads_per_allele_group {min_reads_per_allele_group} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
+            papermill  {QC_dir}/single_cell_DARLIN-scCamellia.ipynb -k {kernel} {output_dir}/{wildcards.sample}/single_cell_DARLIN-scCamellia.ipynb  -p sample {wildcards.sample} -p template {wildcards.template} -p data_path {data_dir} -p ref_dir {ref_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p min_reads_per_allele_group {min_reads_per_allele_group} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
             jupyter nbconvert --to html {output_dir}/{wildcards.sample}/single_cell_DARLIN-scCamellia.ipynb
             """
         elif cfg_type=='sc10xV3':
             command=f"""
-            papermill  {QC_dir}/single_cell_DARLIN-10x.ipynb -k {kernel} {output_dir}/{wildcards.sample}/single_cell_DARLIN-10x.ipynb  -p sample {wildcards.sample} -p template {template} -p data_path {data_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p ref_dir {ref_dir} -p min_reads_per_allele_group {min_reads_per_allele_group} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
+            papermill  {QC_dir}/single_cell_DARLIN-10x.ipynb -k {kernel} {output_dir}/{wildcards.sample}/single_cell_DARLIN-10x.ipynb  -p sample {wildcards.sample} -p template {wildcards.template} -p data_path {data_dir} -p output_dir {output_dir}/{wildcards.sample} -p cfg {cfg_type} -p ref_dir {ref_dir} -p min_reads_per_allele_group {min_reads_per_allele_group} -p distance_relative_threshold {distance_relative_threshold} -p read_ratio_threshold {read_ratio_threshold} -p seq_3prime_upper_N {seq_3prime_upper_N}
             jupyter nbconvert --to html {output_dir}/{wildcards.sample}/single_cell_DARLIN-10x.ipynb
             """
             
         
-        job_name=f'scL_{wildcards.sample}'
+        job_name=f'scL_{wildcards.sample}_{wildcards.template}'
         if config['sbatch']==0:
             print("Run on terminal directly")
             os.system(command)
