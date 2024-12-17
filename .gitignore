@@ -1,0 +1,17 @@
+/**/.ipynb_checkpoints
+/**/__pycache__
+/**/__pycache__/*
+*.svg
+/**/.snakemake
+*.done
+/**/.DS_Store
+test/sc-10X/*
+!test/sc-10X/config.yaml
+!test/sc-10X/raw_fastq
+test/scCamellia/*
+!test/scCamellia/config.yaml
+!test/scCamellia/raw_fastq
+*.egg-info
+test/bulk/*
+!test/bulk/config.yaml
+!test/bulk/raw_fastq
