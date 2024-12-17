@@ -10,13 +10,6 @@ cd ../sc-10X
 # run matlab-based DARLIN pipeline 
 snakemake -s ../../snakefiles/snakefile_matlab_DARLIN_Part1.py  --configfile config.yaml --core 10 --config sbatch=0 -R DARLIN
 
-# run customized python pipeline on single-cell data
-snakemake -s ../../snakefiles/snakefile_python_DARLIN.py  --configfile config.yaml --core 5 --config sbatch=0 -R DARLIN
-
-
 cd ../scCamellia
 # run matlab-based DARLIN pipeline 
 snakemake -s ../../snakefiles/snakefile_matlab_DARLIN_Part1.py  --configfile config.yaml --core 10 --config sbatch=0 -R DARLIN
-
-# run customized python pipeline on single-cell data
-snakemake -s ../../snakefiles/snakefile_python_DARLIN.py  --configfile config.yaml --core 5 --config sbatch=0 -R DARLIN
