@@ -55,8 +55,8 @@ rule all:
 
 rule DARLIN:        
     input:
-        fq_R1="raw_fastq/{sample}_L001_R1_001.fastq.gz",
-        fq_R2="raw_fastq/{sample}_L001_R2_001.fastq.gz"
+        fq_R1="raw_fastq/{sample}_R1.fastq.gz",
+        fq_R2="raw_fastq/{sample}_R2.fastq.gz"
     output:
         touch("DARLIN/{sub_dir}/{sample}/DARLIN_analysis.done")
     run:
