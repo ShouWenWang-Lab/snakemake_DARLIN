@@ -64,6 +64,10 @@ With `sbatch=0`, it should run properly in a normal Linux system without SLURM. 
 
 ![image info](./images/after_running_pipeline.png)
 
+Please create three separate folders named CA, TA, and RA. Inside each folder, create a raw_fastq subfolder along with a config.yaml file. Each raw_fastq folder should contain reads that correspond to its parent template (i.e., CA folder’s raw_fastq contains CA reads).
+
+Alternatively, it is also acceptable to mix reads from different templates (i.e., include all reads from CA, TA, and RA together) within a single raw_fastq subfolder. In this case, during downstream analysis, each folder (CA, TA, RA) will extract only the reads that match its respective template. As a result, the fraction of valid_lines reported in the Results.txt file will appear low, because only a subset of the total reads corresponds to any given template.
+
 As indicated in the above example, the `config.yaml` file should be at the root folder of a project, and the fastq data should be at the folder `raw_fastq`.
 
 We assume that the data is generated with Miseq machine from Illumina. Specifically, we assume that the file name starts with a sample_ID, and has both R1 and R2:
