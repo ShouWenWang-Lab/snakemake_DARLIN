@@ -4,6 +4,21 @@ This is a Snakemake pipeline to automatically preprocess data (e.g., run PEAR to
 
 Note that this pipeline must be used with a customized version of the [CARLIN pipeline](https://github.com/ShouWenWang-Lab/Custom_CARLIN), which we adapted from the original software to deal with several different DARLIN references in the CA, TA, and RA loci respectively.
 
+### 🚀 New: MATLAB-free preprocessing in Python
+
+> **We now recommend the new Python-based [`JarningGau/darlin`](https://github.com/JarningGau/darlin) preprocessing workflow for DARLIN data.**
+
+The Python workflow completely removes the dependency on the MATLAB CARLIN pipeline and its associated toolboxes. It is designed to be faster, easier to install and use, and simpler to customize for new experimental designs.
+
+Key advantages include:
+
+- **No MATLAB or CARLIN installation required**
+- **Faster and more streamlined preprocessing**
+- **Support for multiple input formats and sequencing platforms—not only 10x Genomics data**
+- **A flexible Python codebase that is easier to inspect, extend, and adapt**
+
+The legacy MATLAB-based pipeline is documented below.
+
 ## Installation
 
 First, make a conda environment:
@@ -191,4 +206,3 @@ L. Li, S. Bowling, S. E. McGeary, Q. Yu, B. Lemke, K. Alcedo, Y. Jia, X. Liu, M.
 - [Raw and intermediate data for these notebooks](https://zenodo.org/records/11929508). To download all raw or processed data, please go to [GEO: GSE222486](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE222486)
 
 - [Shou-Wen Wang Lab website](https://www.shouwenwang-lab.com/)
-
